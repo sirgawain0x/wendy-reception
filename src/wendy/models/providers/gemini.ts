@@ -31,7 +31,7 @@ export class GeminiProvider implements ModelProvider {
     const startTime = Date.now();
 
     try {
-      const endpoint = `${this.config.endpoint.replace(/\/$/, '')}/v1/chat/completions`;
+      const endpoint = `${this.config.endpoint.replace(/\/$/, '')}/chat/completions`;
       const apiKey = this.getApiKey();
 
       const body = {
@@ -97,7 +97,7 @@ export class GeminiProvider implements ModelProvider {
 
   async health(): Promise<ModelHealth> {
     try {
-      const endpoint = `${this.config.endpoint.replace(/\/$/, '')}/v1/models`;
+      const endpoint = `${this.config.endpoint.replace(/\/$/, '')}/models`;
       const apiKey = this.getApiKey();
 
       const headers: Record<string, string> = {};
