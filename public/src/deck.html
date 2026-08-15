@@ -1,24 +1,665 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr Fort - ${page}</title>
-  <style>
-    body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 2rem; }
-    .nav { margin-bottom: 2rem; }
-    .nav a { margin-right: 1rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G2 Consultants — Deerwood Lake Chiropractic Presentation</title>
+<style>
+  @page { size: landscape; margin: 0; }
+  @media print {
+    .slide { page-break-after: always; height: 100vh; overflow: hidden; padding: 32px 40px !important; }
+    .slide:last-child { page-break-after: avoid; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h2 { font-size: 28px !important; margin-bottom: 12px !important; }
+    .subtitle { font-size: 13px !important; margin-bottom: 12px !important; }
+    .card { padding: 10px 12px !important; }
+    .card h3 { font-size: 13px !important; }
+    .card p, .card li { font-size: 11px !important; }
+    .stat .number { font-size: 36px !important; }
+    .stat .label { font-size: 11px !important; }
+    .step { padding: 16px 12px !important; }
+    .step h3 { font-size: 14px !important; }
+    .step p, .step li { font-size: 10px !important; }
+    .compare-table th, .compare-table td { padding: 6px 10px !important; font-size: 12px !important; }
+    .footnote { font-size: 10px !important; margin-top: 6px !important; }
+    .pricing-box { padding: 20px 24px !important; }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1a2744;
+    --blue: #2563eb;
+    --light-blue: #dbeafe;
+    --teal: #0d9488;
+    --teal-light: #ccfbf1;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-500: #6b7280;
+    --gray-700: #374151;
+    --gray-900: #111827;
+    --white: #ffffff;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    .slide { padding: 28px 20px !important; margin: 12px auto; min-height: auto !important; border-radius: 8px; }
+    h2 { font-size: 24px !important; margin-bottom: 16px !important; }
+    .subtitle { font-size: 14px !important; margin-bottom: 16px !important; }
+    .cards-2, .cards-3, .cards-4 { grid-template-columns: 1fr !important; }
+    .card { padding: 16px !important; }
+    .card h3 { font-size: 16px !important; }
+    .card p { font-size: 13px !important; }
+    .stat .number { font-size: 36px !important; }
+    .stat .label { font-size: 13px !important; }
+    .steps { flex-direction: column !important; }
+    .arrow-between { display: none !important; }
+    .compare-table th, .compare-table td { padding: 8px 10px !important; font-size: 13px !important; }
+    .slide-title h1 { font-size: 32px !important; }
+    .slide-title .tagline { font-size: 16px !important; margin-bottom: 24px !important; }
+    .pricing-tiers { grid-template-columns: 1fr !important; }
+    .slide-number { font-size: 11px !important; bottom: 12px !important; right: 16px !important; }
+    .cta-slide h2 { font-size: 28px !important; }
+    .cta-slide .sub { font-size: 16px !important; }
+    .cta-list li { font-size: 15px !important; }
+    .footnote { font-size: 11px !important; }
+    [style*="grid-template-columns: 1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+    [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+    [style*="display: flex"][style*="gap: 32px"] { flex-direction: column !important; gap: 12px !important; }
+    [style*="grid-column: span 2"] { grid-column: span 1 !important; }
+  }
+
+  @media (max-width: 480px) {
+    .slide { padding: 20px 16px !important; }
+    h2 { font-size: 22px !important; }
+    .slide-title h1 { font-size: 26px !important; }
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    margin: 24px auto;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 64px 72px;
+    min-height: 675px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-number {
+    position: absolute;
+    bottom: 24px;
+    right: 36px;
+    font-size: 13px;
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+
+  .brand-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--blue), var(--teal));
+  }
+
+  .slide-title {
+    background: var(--navy);
+    color: var(--white);
+    text-align: center;
+  }
+  .slide-title .brand-bar { background: linear-gradient(90deg, var(--teal), var(--blue)); }
+  .slide-title h1 { font-size: 48px; font-weight: 800; margin-bottom: 12px; letter-spacing: -1px; }
+  .slide-title .tagline { font-size: 22px; color: #94a3b8; margin-bottom: 48px; font-weight: 400; }
+  .slide-title .meeting-info { font-size: 16px; color: #64748b; line-height: 2; }
+  .slide-title .meeting-info strong { color: #cbd5e1; }
+
+  h2 { font-size: 36px; font-weight: 700; color: var(--navy); margin-bottom: 32px; letter-spacing: -0.5px; }
+  h2 .accent { color: var(--blue); }
+  h3 { font-size: 20px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; }
+
+  .cards { display: grid; gap: 20px; }
+  .cards-2 { grid-template-columns: 1fr 1fr; }
+  .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cards-4 { grid-template-columns: 1fr 1fr; }
+
+  .card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 28px 24px;
+  }
+  .card.red { background: var(--red-light); border-color: #fecaca; }
+  .card.green { background: var(--green-light); border-color: #bbf7d0; }
+  .card.blue { background: var(--light-blue); border-color: #93c5fd; }
+  .card.teal { background: var(--teal-light); border-color: #99f6e4; }
+
+  .card .icon { font-size: 32px; margin-bottom: 12px; }
+  .card h3 { margin-bottom: 8px; }
+  .card p { font-size: 15px; color: var(--gray-700); line-height: 1.6; }
+
+  .stat { text-align: center; padding: 32px 20px; }
+  .stat .number { font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1; margin-bottom: 8px; }
+  .stat .number.red { color: var(--red); }
+  .stat .number.green { color: var(--green); }
+  .stat .number.blue { color: var(--blue); }
+  .stat .number.teal { color: var(--teal); }
+  .stat .label { font-size: 15px; color: var(--gray-500); font-weight: 500; }
+
+  .steps { display: flex; gap: 24px; margin-top: 8px; }
+  .step {
+    flex: 1;
+    text-align: center;
+    padding: 32px 24px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+  }
+  .step .step-num {
+    width: 48px; height: 48px;
+    background: var(--blue);
+    color: var(--white);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .step h3 { text-align: center; }
+  .step p { font-size: 14px; color: var(--gray-500); line-height: 1.5; }
+
+  .arrow-between {
+    display: flex;
+    align-items: center;
+    font-size: 28px;
+    color: var(--gray-200);
+    font-weight: 700;
+  }
+
+  .compare-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .compare-table th, .compare-table td { padding: 14px 18px; text-align: left; font-size: 15px; }
+  .compare-table thead th { background: var(--navy); color: var(--white); font-weight: 600; }
+  .compare-table thead th:first-child { border-radius: 8px 0 0 0; }
+  .compare-table thead th:last-child { border-radius: 0 8px 0 0; }
+  .compare-table tbody tr { border-bottom: 1px solid var(--gray-200); }
+  .compare-table tbody tr:last-child { border-bottom: none; }
+  .compare-table .before { color: var(--red); font-weight: 600; }
+  .compare-table .after { color: var(--green); font-weight: 600; }
+
+  .pricing-box {
+    background: var(--gray-50);
+    border: 2px solid var(--blue);
+    border-radius: 12px;
+    padding: 36px 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .pricing-box .price { font-size: 44px; font-weight: 800; color: var(--blue); }
+  .pricing-box .price span { font-size: 18px; font-weight: 500; color: var(--gray-500); }
+  .pricing-box .includes { text-align: left; margin-top: 20px; }
+  .pricing-box .includes li { font-size: 15px; padding: 6px 0; color: var(--gray-700); list-style: none; }
+  .pricing-box .includes li::before { content: "✓ "; color: var(--green); font-weight: 700; }
+
+  .cta-slide { text-align: center; }
+  .cta-slide h2 { font-size: 40px; margin-bottom: 16px; }
+  .cta-slide .sub { font-size: 20px; color: var(--gray-500); margin-bottom: 40px; }
+  .cta-list { display: inline-block; text-align: left; }
+  .cta-list li { font-size: 18px; padding: 8px 0; color: var(--gray-700); list-style: none; }
+  .cta-list li::before { content: "→ "; color: var(--blue); font-weight: 700; }
+  .contact-info { margin-top: 40px; font-size: 16px; color: var(--gray-500); }
+  .contact-info strong { color: var(--navy); }
+
+  .subtitle { font-size: 18px; color: var(--gray-500); margin-top: -24px; margin-bottom: 32px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .text-sm { font-size: 13px; color: var(--gray-500); }
+  .text-center { text-align: center; }
+  .footnote { font-size: 12px; color: var(--gray-500); margin-top: 24px; font-style: italic; }
+</style>
 </head>
 <body>
-  <nav class="nav">
-    <a href="/src/index.html">Index</a>
-    <a href="/src/hub.html">Hub</a>
-    <a href="/src/live.html">Live</a>
-    <a href="/src/deck.html">Deck</a>
-  </nav>
-  <h1>${page}.html</h1>
-  <p>Static page: ${page}</p>
-  <p><em>Replace with actual content from original deployment</em></p>
+
+<!-- SLIDE 1: Title -->
+<div class="slide slide-title">
+  <div class="brand-bar"></div>
+  <h1>G2 Consultants</h1>
+  <p class="tagline">Automation That Works While You Focus on Patients</p>
+  <div style="margin-top: 48px;">
+    <p class="meeting-info">
+      Prepared for <strong>Dr. Anthony Fort</strong><br>
+      <strong>Deerwood Lake Chiropractic</strong><br>
+      April 10, 2026
+    </p>
+  </div>
+  <div class="slide-number" style="color:#64748b;">1</div>
+</div>
+
+<!-- SLIDE 2: The Problem & Our Solution -->
+<div class="slide" style="padding: 48px 64px;">
+  <div class="brand-bar"></div>
+  <h2 style="margin-bottom: 20px;">The <span class="accent">Problem</span> We Solve</h2>
+  <p style="font-size: 15px; line-height: 1.6; color: var(--gray-700); margin-bottom: 16px;">Your practice delivers excellent patient care. But behind the scenes — scheduling, reminders, intake, and follow-up consumes valuable staff time and creates gaps that impact revenue and patient experience.</p>
+  <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+    <div style="flex:1; text-align:center; padding: 10px; background: var(--red-light); border-radius: 8px; border: 1px solid #fecaca;">
+      <span style="font-size: 20px;">⏱️</span>
+      <p style="font-size: 13px; font-weight: 600; margin-top: 4px;">Lost Time</p>
+    </div>
+    <div style="flex:1; text-align:center; padding: 10px; background: var(--red-light); border-radius: 8px; border: 1px solid #fecaca;">
+      <span style="font-size: 20px;">💸</span>
+      <p style="font-size: 13px; font-weight: 600; margin-top: 4px;">Missed Revenue</p>
+    </div>
+    <div style="flex:1; text-align:center; padding: 10px; background: var(--red-light); border-radius: 8px; border: 1px solid #fecaca;">
+      <span style="font-size: 20px;">📋</span>
+      <p style="font-size: 13px; font-weight: 600; margin-top: 4px;">Admin Burden</p>
+    </div>
+  </div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+    <div class="card" style="padding: 18px; background: var(--green-light); border-color: #bbf7d0;">
+      <h3 style="font-size: 17px; margin-bottom: 6px;">Our Solution</h3>
+      <p style="font-size: 13px;">We design and implement custom automation workflows that streamline your operations — so your team can focus on patient care, not manual tasks.</p>
+    </div>
+    <div class="card" style="padding: 18px; background: var(--light-blue); border-color: #93c5fd;">
+      <h3 style="font-size: 17px; margin-bottom: 6px;">How We're Different</h3>
+      <p style="font-size: 13px;">Most platforms give you software and expect you to figure it out. <strong>We don't.</strong></p>
+      <ul style="font-size: 12px; padding-left: 16px; line-height: 1.7; margin-top: 6px;">
+        <li>We build and configure automations <em>for you</em></li>
+        <li>Tailored to your exact workflow</li>
+        <li>No steep learning curve</li>
+        <li>No disruption to your current systems</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="padding: 16px 20px;">
+    <div style="display: flex; gap: 32px; align-items: flex-start;">
+      <div style="flex: 1;">
+        <p style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">We specialize in:</p>
+        <ul style="font-size: 13px; padding-left: 16px; line-height: 1.7;">
+          <li>Chiropractic practices</li>
+          <li>Medical practices</li>
+          <li>Professional service offices</li>
+        </ul>
+      </div>
+      <div style="flex: 1;">
+        <p style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">We understand:</p>
+        <ul style="font-size: 13px; padding-left: 16px; line-height: 1.7;">
+          <li>Clinical workflows</li>
+          <li>Front office bottlenecks</li>
+          <li>Compliance & patient communication</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size: 14px; font-weight: 700; margin-top: 10px; color: var(--blue);">This isn't a side service — it's our core expertise.</p>
+  </div>
+  <div class="slide-number">2</div>
+</div>
+
+<!-- SLIDE 3: The Real Cost of Manual Work -->
+<div class="slide" style="padding: 40px 50px;">
+  <div class="brand-bar"></div>
+  <h2 style="margin-bottom: 4px;">The <span class="accent">Real Cost</span> of Manual Work</h2>
+  <p style="font-size: 14px; color: var(--gray-500); margin-bottom: 6px;">What's Happening in Most Chiropractic &amp; Medical Practices Today</p>
+  <p style="font-size: 13px; color: var(--gray-700); margin-bottom: 14px;">Your team is working hard, but too much of their time is spent on manual processes that don't generate revenue or improve care.</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+    <div class="card red" style="padding: 14px;">
+      <h3 style="font-size: 14px; margin-bottom: 4px;">📞 High-Volume Confirmation Calls</h3>
+      <ul style="font-size: 11px; padding-left: 14px; line-height: 1.6; color: var(--gray-700);">
+        <li>40+ calls/day just to confirm appointments</li>
+        <li>Most go unanswered, repeated call attempts</li>
+        <li>Staff time lost to phone tag instead of patient care</li>
+      </ul>
+    </div>
+    <div class="card red" style="padding: 14px;">
+      <h3 style="font-size: 14px; margin-bottom: 4px;">📋 Paper-Based Intake &amp; Admin Burden</h3>
+      <ul style="font-size: 11px; padding-left: 14px; line-height: 1.6; color: var(--gray-700);">
+        <li>Clipboard, scanning, filing, searching, data entry</li>
+        <li>One patient's paperwork touches 4–5 staff members</li>
+        <li>Increased risk of errors, delays, and inefficiencies</li>
+      </ul>
+    </div>
+    <div class="card red" style="padding: 14px;">
+      <h3 style="font-size: 14px; margin-bottom: 4px;">🚫 No-Shows Quietly Draining Revenue</h3>
+      <ul style="font-size: 11px; padding-left: 14px; line-height: 1.6; color: var(--gray-700);">
+        <li>Average loss: $75–$200 per missed visit</li>
+        <li>At 15% no-show rate = thousands lost monthly</li>
+        <li>Empty slots = revenue you can't recover</li>
+      </ul>
+    </div>
+    <div class="card red" style="padding: 14px;">
+      <h3 style="font-size: 14px; margin-bottom: 4px;">🔇 No Consistent Post-Visit Follow-Up</h3>
+      <ul style="font-size: 11px; padding-left: 14px; line-height: 1.6; color: var(--gray-700);">
+        <li>Patients leave with no automated engagement</li>
+        <li>Missed opportunities: re-care, adherence, referrals</li>
+        <li>Reactivation becomes manual and too late</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px;">
+    <p style="font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px;">What This Really Means for Your Practice</p>
+    <div style="display: flex; gap: 16px; font-size: 11px; color: var(--gray-700);">
+      <span>• Staff overloaded with low-value admin</span>
+      <span>• Revenue lost from preventable gaps</span>
+      <span>• Patient experience suffers</span>
+      <span>• Growth limited by inefficiency — not demand</span>
+    </div>
+  </div>
+
+  <div style="background: var(--navy); color: white; border-radius: 8px; padding: 12px 20px; text-align: center;">
+    <p style="font-size: 13px;">Your practice isn't inefficient — <strong>your processes are.</strong> And those processes are costing you time, revenue, and growth.</p>
+  </div>
+  <div class="slide-number">3</div>
+</div>
+
+<!-- SLIDE 4: What This Actually Costs You -->
+<div class="slide" style="padding: 36px 46px;">
+  <div class="brand-bar"></div>
+  <h2 style="margin-bottom: 4px;">What This <span class="accent">Actually Costs</span> You</h2>
+  <p style="font-size: 14px; color: var(--gray-500); margin-bottom: 6px;">The Hidden Cost of Manual Operations</p>
+  <p style="font-size: 13px; color: var(--gray-700); margin-bottom: 16px;">Most practices don't realize how much revenue and time is lost to everyday inefficiencies.</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+    <div class="card stat" style="padding: 14px;">
+      <div class="number red" style="font-size: 38px;">15%</div>
+      <div class="label" style="font-size: 13px;">Average No-Show Rate</div>
+      <ul style="font-size: 11px; text-align: left; padding-left: 16px; line-height: 1.6; color: var(--gray-700); margin-top: 8px;">
+        <li>A significant portion of your schedule never converts to revenue</li>
+        <li>Empty slots = lost income you can't recover</li>
+      </ul>
+    </div>
+    <div class="card stat" style="padding: 14px;">
+      <div class="number red" style="font-size: 38px;">$12,800</div>
+      <div class="label" style="font-size: 13px;">Monthly Revenue Lost (Typical Practice)</div>
+      <ul style="font-size: 11px; text-align: left; padding-left: 16px; line-height: 1.6; color: var(--gray-700); margin-top: 8px;">
+        <li>Missed visits + weak follow-up = consistent revenue leakage</li>
+        <li>Scales quickly across providers and locations</li>
+      </ul>
+    </div>
+    <div class="card stat" style="padding: 14px;">
+      <div class="number red" style="font-size: 38px;">10+</div>
+      <div class="label" style="font-size: 13px;">Staff Hours Lost Every Week</div>
+      <ul style="font-size: 11px; text-align: left; padding-left: 16px; line-height: 1.6; color: var(--gray-700); margin-top: 8px;">
+        <li>Appointment reminders, intake processing, manual follow-ups</li>
+        <li><em>Time spent on tasks that don't require human intervention</em></li>
+      </ul>
+    </div>
+    <div class="card stat" style="padding: 14px;">
+      <div class="number red" style="font-size: 38px;">60%</div>
+      <div class="label" style="font-size: 13px;">Of Admin Work Is Automatable</div>
+      <ul style="font-size: 11px; text-align: left; padding-left: 16px; line-height: 1.6; color: var(--gray-700); margin-top: 8px;">
+        <li>Scheduling confirmations, intake forms, data entry</li>
+        <li><em>Majority of time on repeatable, low-value tasks</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px;">
+    <p style="font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px;">What This Means for Your Practice</p>
+    <div style="display: flex; gap: 16px; font-size: 11px; color: var(--gray-700);">
+      <span>• Revenue is being lost <strong>daily</strong> — not occasionally</span>
+      <span>• Staff operating below their highest value</span>
+      <span>• Growth limited by process, not demand</span>
+    </div>
+  </div>
+
+  <div style="background: var(--navy); color: white; border-radius: 8px; padding: 12px 20px; text-align: center;">
+    <p style="font-size: 13px;">You don't have a patient volume problem. You have an <strong>efficiency problem</strong> — costing you thousands every month.</p>
+  </div>
+  <p class="footnote text-center" style="margin-top: 8px;">Sources: Chiropractic Economics, MGMA Practice Operations Survey, ACA Industry Reports</p>
+  <div class="slide-number">4</div>
+</div>
+
+<!-- SLIDE 5: How We Recover Lost Revenue Automatically -->
+<div class="slide" style="padding: 32px 46px;">
+  <div class="brand-bar"></div>
+  <h2 style="margin-bottom: 4px;">How We <span class="accent">Recover Lost Revenue</span> Automatically</h2>
+  <p style="font-size: 14px; color: var(--gray-500); margin-bottom: 16px;">Automation That Works While You Focus on Patients</p>
+  <p style="font-size: 13px; color: var(--gray-700); margin-bottom: 16px;">We eliminate manual gaps and replace them with intelligent, done-for-you workflows that run in the background of your practice.</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+    <div class="card" style="padding: 12px; background: var(--light-blue); border-color: #93c5fd;">
+      <h3 style="font-size: 13px; margin-bottom: 4px;">Smart Appointment Confirmations</h3>
+      <ul style="font-size: 11px; padding-left: 14px; line-height: 1.6; color: var(--gray-700);">
+        <li>Auto text/email reminders</li>
+        <li>Two-way confirmations &amp; easy rescheduling</li>
+      </ul>
+      <p style="font-size: 11px; font-weight: 700; color: var(--green); margin-top: 6px;">★ Reduce no-shows by 30–60%</p>
+    </div>
+    <div class="card" style="padding: 12px; background: var(--teal-light); border-color: #99f6e4;">
+      <h3 style="font-size: 13px; margin-bottom: 4px;">Digital Intake &amp; Patient Forms</h3>
+      <ul style="font-size: 11px; padding-left: 14px; line-height: 1.6; color: var(--gray-700);">
+        <li>Forms completed before arrival</li>
+        <li>Auto-populated into your system</li>
+      </ul>
+      <p style="font-size: 11px; font-weight: 700; color: var(--green); margin-top: 6px;">★ Eliminate paperwork + reduce front desk load</p>
+    </div>
+    <div class="card" style="padding: 12px; background: var(--green-light); border-color: #bbf7d0;">
+      <h3 style="font-size: 13px; margin-bottom: 4px;">Automated Follow-Ups &amp; Recall</h3>
+      <ul style="font-size: 11px; padding-left: 14px; line-height: 1.6; color: var(--gray-700);">
+        <li>Post-visit check-ins</li>
+        <li>Re-care reminders</li>
+        <li>Missed appointment recovery</li>
+      </ul>
+      <p style="font-size: 11px; font-weight: 700; color: var(--green); margin-top: 6px;">★ Increase retention &amp; visit frequency</p>
+    </div>
+    <div class="card" style="padding: 12px; background: var(--gray-50);">
+      <h3 style="font-size: 13px; margin-bottom: 4px;">Reactivation Campaigns</h3>
+      <ul style="font-size: 11px; padding-left: 14px; line-height: 1.6; color: var(--gray-700);">
+        <li>Target inactive patients automatically</li>
+        <li>Personalized outreach at scale</li>
+      </ul>
+      <p style="font-size: 11px; font-weight: 700; color: var(--green); margin-top: 6px;">★ Turn inactive patients into booked appointments</p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+    <div style="background: var(--green-light); border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 16px;">
+      <p style="font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 6px;">What This Means in Real Dollars</p>
+      <ul style="font-size: 12px; padding-left: 16px; line-height: 1.7; color: var(--gray-700);">
+        <li>Recover <strong>$8,000–$20,000+/month</strong> in lost revenue</li>
+        <li>Save <strong>10–20+ staff hours</strong> per week</li>
+        <li>Reduce reliance on additional front desk hiring</li>
+      </ul>
+    </div>
+    <div style="border-radius: 8px; padding: 14px 16px; border: 1px solid var(--gray-200);">
+      <p style="font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 6px;">Before vs. After</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px;">
+        <div>
+          <p style="color: var(--red); font-weight: 600; margin-bottom: 4px;">Before:</p>
+          <p style="line-height: 1.6; color: var(--gray-700);">Manual calls • Paper forms • Missed follow-ups • Revenue leaks</p>
+        </div>
+        <div>
+          <p style="color: var(--green); font-weight: 600; margin-bottom: 4px;">After:</p>
+          <p style="line-height: 1.6; color: var(--gray-700);">Auto confirmations • Digital workflows • Consistent engagement • Revenue captured</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background: var(--navy); color: white; border-radius: 8px; padding: 12px 20px; text-align: center;">
+    <p style="font-size: 13px;">We don't sell software. We install a system that <strong>recovers revenue and runs your front office — automatically.</strong></p>
+  </div>
+  <div class="slide-number">5</div>
+</div>
+
+<!-- SLIDE 6: What It Looks Like to Get Started -->
+<div class="slide" style="padding: 32px 46px;">
+  <div class="brand-bar"></div>
+  <h2>What It Looks Like to <span class="accent">Get Started</span></h2>
+  <p class="subtitle">Simple. Fast. No Disruption to Your Practice.</p>
+  <p style="font-size: 15px; color: var(--gray-500); margin-bottom: 24px; margin-top: -16px;">We handle everything so your team can stay focused on patients from day one.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Practice Workflow Assessment</h3>
+      <p style="font-size: 13px;"><strong>Week 1</strong></p>
+      <ul style="font-size: 12px; text-align: left; padding-left: 16px; line-height: 1.7; margin-top: 8px;">
+        <li>Map your current scheduling, intake &amp; follow-up processes</li>
+        <li>Identify revenue gaps and automation opportunities</li>
+        <li><em>No disruption to daily operations</em></li>
+      </ul>
+    </div>
+    <div class="arrow-between">→</div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Done-For-You Setup</h3>
+      <p style="font-size: 13px;"><strong>Week 2–3</strong></p>
+      <ul style="font-size: 12px; text-align: left; padding-left: 16px; line-height: 1.7; margin-top: 8px;">
+        <li>Build &amp; configure your custom automation workflows</li>
+        <li>Integrate with your existing systems</li>
+        <li><em>We do the heavy lifting — not your staff</em></li>
+      </ul>
+    </div>
+    <div class="arrow-between">→</div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Go Live + Optimization</h3>
+      <p style="font-size: 13px;"><strong>Week 3–4</strong></p>
+      <ul style="font-size: 12px; text-align: left; padding-left: 16px; line-height: 1.7; margin-top: 8px;">
+        <li>Launch automations seamlessly</li>
+        <li>Monitor performance and fine-tune</li>
+        <li><em>Immediate impact on no-shows, intake &amp; follow-up</em></li>
+      </ul>
+    </div>
+  </div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
+    <div class="card" style="padding: 16px;">
+      <h3 style="font-size: 15px; margin-bottom: 8px;">What You Can Expect</h3>
+      <ul style="font-size: 13px; padding-left: 16px; line-height: 1.8;">
+        <li>No-show reduction within weeks</li>
+        <li>Revenue recovery in the first 30 days</li>
+        <li>10–20+ hours/week given back to your staff</li>
+        <li>More consistent patient flow and retention</li>
+      </ul>
+    </div>
+    <div class="card" style="padding: 16px;">
+      <h3 style="font-size: 15px; margin-bottom: 8px;">Zero Friction Commitment</h3>
+      <ul style="font-size: 13px; padding-left: 16px; line-height: 1.8;">
+        <li>No long onboarding cycles</li>
+        <li>No complex training</li>
+        <li>No additional headcount required</li>
+      </ul>
+      <p style="font-size: 14px; font-weight: 700; margin-top: 8px; color: var(--blue);">We implement. You benefit.</p>
+    </div>
+  </div>
+  <div style="background: var(--navy); color: white; border-radius: 8px; padding: 14px 20px; margin-top: 16px; text-align: center;">
+    <p style="font-size: 14px;">If we could help you recover <strong>$8K–$20K/month</strong> and give your team <strong>10+ hours back each week</strong>, would it be worth a 20-minute conversation?</p>
+  </div>
+  <div class="slide-number">6</div>
+</div>
+
+<!-- SLIDE 7: ROI Snapshot -->
+<div class="slide">
+  <div class="brand-bar"></div>
+  <h2>Return on <span class="accent">Investment</span></h2>
+  <p class="subtitle">Conservative estimates for a typical chiropractic practice</p>
+  <div class="cards cards-3" style="margin-bottom: 28px;">
+    <div class="card stat green">
+      <div class="number green">67%</div>
+      <div class="label">Reduction in<br>no-show rate</div>
+    </div>
+    <div class="card stat green">
+      <div class="number green">10+ hrs</div>
+      <div class="label">Staff time saved<br>per week</div>
+    </div>
+    <div class="card stat green">
+      <div class="number teal">Week 1</div>
+      <div class="label">Time to see<br>first results</div>
+    </div>
+  </div>
+  <div style="background: var(--green-light); border-radius: 10px; padding: 28px 36px; border: 1px solid #bbf7d0;">
+    <p style="font-size: 18px; text-align: center;">
+      <strong style="color: var(--green);">Net impact:</strong> Practices typically recover
+      <strong style="font-size: 22px; color: var(--green);">3-8x</strong> their monthly investment
+      in reduced no-shows, saved labor, and increased patient retention.
+    </p>
+  </div>
+  <p class="footnote text-center">Based on comparable chiropractic and medical office automation case studies</p>
+  <div class="slide-number">7</div>
+</div>
+
+<!-- SLIDE 8: Pricing -->
+<div class="slide" style="padding: 36px 46px;">
+  <div class="brand-bar"></div>
+  <h2><span class="accent">Investment</span></h2>
+  <p class="subtitle" style="margin-bottom: 20px;">Simple, transparent pricing. No hidden fees.</p>
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+    <div class="card" style="border: 2px solid var(--gray-200); text-align: center; padding: 16px 14px;">
+      <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); font-weight: 600;">Tier 1</p>
+      <h3 style="margin-bottom: 2px; font-size: 16px;">AI Receptionist</h3>
+      <p style="font-size: 30px; font-weight: 800; color: var(--blue); margin: 8px 0 4px;">$1,500<span style="font-size: 14px; font-weight: 500; color: var(--gray-500);">/mo</span></p>
+      <ul style="text-align: left; font-size: 12px; list-style: none; padding: 0; margin-top: 10px;">
+        <li style="padding: 2px 0;">✓ 24/7 AI call answering</li>
+        <li style="padding: 2px 0;">✓ Appointment booking to calendar</li>
+        <li style="padding: 2px 0;">✓ SMS alerts to office manager</li>
+        <li style="padding: 2px 0;">✓ Monthly analytics report</li>
+        <li style="padding: 2px 0;">✓ Ongoing AI optimization</li>
+        <li style="padding: 2px 0;">✓ Dedicated support</li>
+      </ul>
+    </div>
+    <div class="card" style="border: 2px solid var(--blue); text-align: center; padding: 16px 14px;">
+      <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); font-weight: 600;">Tier 2 — Recommended</p>
+      <h3 style="margin-bottom: 2px; font-size: 16px;">AI + Patient Automation</h3>
+      <p style="font-size: 30px; font-weight: 800; color: var(--blue); margin: 8px 0 4px;">$2,250<span style="font-size: 14px; font-weight: 500; color: var(--gray-500);">/mo</span></p>
+      <ul style="text-align: left; font-size: 12px; list-style: none; padding: 0; margin-top: 10px;">
+        <li style="padding: 2px 0;">✓ Everything in Tier 1</li>
+        <li style="padding: 2px 0;">✓ Automated appointment reminders</li>
+        <li style="padding: 2px 0;">✓ No-show follow-up sequences</li>
+        <li style="padding: 2px 0;">✓ Digital patient intake forms</li>
+      </ul>
+    </div>
+    <div class="card" style="border: 2px solid var(--teal); text-align: center; padding: 16px 14px;">
+      <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--teal); font-weight: 600;">Tier 3</p>
+      <h3 style="margin-bottom: 2px; font-size: 16px;">Full Practice Automation</h3>
+      <p style="font-size: 30px; font-weight: 800; color: var(--teal); margin: 8px 0 4px;">$3,000<span style="font-size: 14px; font-weight: 500; color: var(--gray-500);">/mo</span></p>
+      <ul style="text-align: left; font-size: 12px; list-style: none; padding: 0; margin-top: 10px;">
+        <li style="padding: 2px 0;">✓ Everything in Tier 2</li>
+        <li style="padding: 2px 0;">✓ Post-visit follow-ups</li>
+        <li style="padding: 2px 0;">✓ Google review automation</li>
+        <li style="padding: 2px 0;">✓ Patient reactivation campaigns</li>
+        <li style="padding: 2px 0;">✓ Custom reporting dashboard</li>
+      </ul>
+    </div>
+  </div>
+  <p class="footnote text-center">All plans include a 90-day pilot — month-to-month after that. No long-term contracts.</p>
+  <div class="slide-number">8</div>
+</div>
+
+<!-- SLIDE 9: Next Steps -->
+<div class="slide cta-slide">
+  <div class="brand-bar"></div>
+  <h2>Let's <span class="accent">Get Started</span></h2>
+  <p class="sub">Here's what happens next</p>
+  <ul class="cta-list">
+    <li><strong>Free Workflow Audit</strong> — We map your current processes (30 min)</li>
+    <li><strong>Custom Proposal</strong> — Tailored automations + projected ROI for your practice</li>
+    <li><strong>90-Day Pilot</strong> — Start small, prove the value, then expand</li>
+    <li><strong>Results in Week 1</strong> — First automations live within days of kickoff</li>
+  </ul>
+  <div class="contact-info">
+    <p><strong>G2 Consultants</strong></p>
+    <p style="margin-top: 8px;">Ready when you are.</p>
+  </div>
+  <div class="slide-number">9</div>
+</div>
+
 </body>
 </html>

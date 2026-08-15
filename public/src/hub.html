@@ -1,24 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr Fort - ${page}</title>
-  <style>
-    body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 2rem; }
-    .nav { margin-bottom: 2rem; }
-    .nav a { margin-right: 1rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G2 Consultants — Deerwood Lake Chiropractic</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1a2744; }
+  .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+  h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+  .sub { text-align: center; color: #64748b; margin-bottom: 40px; font-size: 16px; }
+  .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; text-decoration: none; display: block; transition: transform 0.15s, box-shadow 0.15s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+  .card h3 { font-size: 18px; margin-bottom: 6px; color: #1a2744; }
+  .card p { font-size: 14px; color: #64748b; }
+  .card .icon { font-size: 28px; margin-bottom: 12px; }
+  .phone { background: #1a2744; color: white; text-align: center; border-radius: 12px; padding: 28px; margin-bottom: 16px; }
+  .phone h3 { color: white; font-size: 16px; margin-bottom: 8px; }
+  .phone .number { font-size: 28px; font-weight: 800; color: #60a5fa; }
+  .phone p { color: #94a3b8; font-size: 13px; margin-top: 8px; }
+  .footer { text-align: center; color: #94a3b8; font-size: 13px; margin-top: 32px; }
+</style>
 </head>
 <body>
-  <nav class="nav">
-    <a href="/src/index.html">Index</a>
-    <a href="/src/hub.html">Hub</a>
-    <a href="/src/live.html">Live</a>
-    <a href="/src/deck.html">Deck</a>
-  </nav>
-  <h1>${page}.html</h1>
-  <p>Static page: ${page}</p>
-  <p><em>Replace with actual content from original deployment</em></p>
+<div class="container">
+  <h1>G2 Consultants</h1>
+  <p class="sub">Prepared for Deerwood Lake Chiropractic</p>
+
+  <div class="phone">
+    <h3>📞 Try the AI Receptionist Live</h3>
+    <a href="tel:+16108139049" class="number" style="text-decoration:none; color:#60a5fa;">+1 (610) 813-9049</a>
+    <p>Call from your phone — the AI answers as Deerwood Lake Chiropractic</p>
+  </div>
+
+  <a href="/src/live.html" class="card">
+    <div class="icon">🎙️</div>
+    <h3>Browser Voice Demo</h3>
+    <p>Talk to the AI receptionist from your browser with live transcript</p>
+  </a>
+
+  <a href="/src/index.html" class="card">
+    <div class="icon">📱</div>
+    <h3>Interactive Prototype</h3>
+    <p>Click-through demo with calendar booking, SMS alerts, and call log</p>
+  </a>
+
+  <a href="/src/deck.html" class="card">
+    <div class="icon">📊</div>
+    <h3>Presentation Deck</h3>
+    <p>9-slide pitch deck with ROI analysis and pricing tiers</p>
+  </a>
+
+  <a href="/src/deck.pdf" class="card">
+    <div class="icon">📄</div>
+    <h3>Download Deck (PDF)</h3>
+    <p>Printable version of the presentation</p>
+  </a>
+
+  <p class="footer">G2 Consultants • April 2026</p>
+</div>
 </body>
 </html>

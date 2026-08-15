@@ -1,24 +1,507 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr Fort - ${page}</title>
-  <style>
-    body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 2rem; }
-    .nav { margin-bottom: 2rem; }
-    .nav a { margin-right: 1rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deerwood Lake Chiropractic AI — Smart Appointment Assistant</title>
+<style>
+  :root {
+    --primary: #1a6b4a;
+    --primary-light: #e8f5ee;
+    --primary-dark: #0f4a32;
+    --accent: #2196F3;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-light: #6b7280;
+    --border: #e5e7eb;
+    --ai-bubble: #e8f5ee;
+    --user-bubble: #dbeafe;
+    --danger: #ef4444;
+    --success: #10b981;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  .header-brand svg { width: 36px; height: 36px; }
+  .header-brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+  .header-brand .subtitle { font-size: 12px; opacity: 0.85; font-weight: 400; }
+
+  .header-stats { display: flex; gap: 24px; font-size: 13px; }
+  .stat { text-align: center; }
+  .stat-value { font-size: 22px; font-weight: 700; }
+  .stat-label { opacity: 0.8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .nav-tabs { display: flex; background: white; border-bottom: 1px solid var(--border); padding: 0 32px; }
+  .nav-tab { padding: 14px 24px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-light); border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .nav-tab:hover { color: var(--primary); }
+  .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .main { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .demo-layout { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+
+  .phone-frame { background: var(--card); border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden; border: 1px solid var(--border); }
+  .phone-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+  .phone-avatar { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .phone-caller-info h3 { font-size: 15px; font-weight: 600; }
+  .phone-caller-info p { font-size: 12px; opacity: 0.85; }
+  .call-status { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
+  .call-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; }
+  .call-dot.active { background: #10b981; animation: pulse 1.5s infinite; }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .chat-area { height: 480px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+  .chat-area::-webkit-scrollbar { width: 4px; }
+  .chat-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+  .message { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; animation: msgIn 0.3s ease; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .message.ai { background: var(--ai-bubble); color: var(--text); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .message.user { background: var(--user-bubble); color: var(--text); align-self: flex-end; border-bottom-right-radius: 4px; }
+  .message.system { background: #fef3c7; color: #92400e; align-self: center; font-size: 12px; text-align: center; border-radius: 8px; }
+  .message .sender { font-size: 11px; font-weight: 600; color: var(--text-light); margin-bottom: 2px; }
+
+  .response-options { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+  .response-btn { padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; background: white; cursor: pointer; font-size: 13px; text-align: left; transition: all 0.2s; color: var(--text); }
+  .response-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+
+  .phone-controls { padding: 16px; display: flex; justify-content: center; gap: 16px; border-top: 1px solid var(--border); }
+  .call-btn { width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.2s; }
+  .call-btn.start { background: var(--success); color: white; }
+  .call-btn.start:hover { background: #059669; }
+  .call-btn.end { background: var(--danger); color: white; }
+  .call-btn.end:hover { background: #dc2626; }
+  .call-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .side-panel { display: flex; flex-direction: column; gap: 20px; }
+  .card { background: var(--card); border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+  .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 16px 20px; }
+
+  .booking-detail { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+  .booking-detail:last-child { border-bottom: none; }
+  .booking-detail .label { color: var(--text-light); font-weight: 500; }
+  .booking-detail .value { font-weight: 600; text-align: right; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-success { background: #d1fae5; color: #065f46; }
+  .badge-pending { background: #fef3c7; color: #92400e; }
+  .badge-info { background: #dbeafe; color: #1e40af; }
+
+  .calendar-grid { display: grid; grid-template-columns: 80px repeat(5, 1fr); gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  .cal-header { background: var(--primary); color: white; padding: 12px 8px; text-align: center; font-size: 13px; font-weight: 600; }
+  .cal-time { background: #f9fafb; padding: 8px; text-align: center; font-size: 12px; color: var(--text-light); font-family: monospace; }
+  .cal-slot { background: white; padding: 4px; min-height: 48px; position: relative; }
+  .cal-event { background: linear-gradient(135deg, var(--primary-light), #d1fae5); border-left: 3px solid var(--primary); padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .cal-event:hover { transform: scale(1.02); box-shadow: var(--shadow); }
+  .cal-event .event-name { font-weight: 600; color: var(--primary-dark); }
+  .cal-event .event-type { color: var(--text-light); }
+
+  .call-log-table { width: 100%; border-collapse: collapse; }
+  .call-log-table th { text-align: left; padding: 12px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); border-bottom: 2px solid var(--border); }
+  .call-log-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid var(--border); }
+  .call-log-table tr:hover td { background: #f9fafb; }
+
+  .call-summary-card { margin-top: 20px; background: var(--primary-light); border: 1px solid #a7f3d0; border-radius: 12px; padding: 20px; }
+  .call-summary-card h3 { font-size: 16px; margin-bottom: 12px; color: var(--primary-dark); }
+  .call-summary-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .call-summary-card li { font-size: 14px; padding-left: 16px; position: relative; }
+  .call-summary-card li::before { content: '>'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+
+  .sms-toast { position: fixed; top: 80px; right: 24px; width: 340px; background: white; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.18); border: 1px solid var(--border); z-index: 200; transform: translateX(400px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; }
+  .sms-toast.visible { transform: translateX(0); }
+  .sms-toast-header { background: #6366f1; color: white; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+  .sms-toast-body { padding: 14px 16px; font-size: 13px; line-height: 1.6; color: var(--text); }
+  .sms-toast-body .sms-from { font-size: 11px; color: var(--text-light); margin-bottom: 6px; }
+  .sms-toast-body .sms-line { margin-bottom: 2px; }
+  .sms-toast-body .sms-line strong { color: var(--primary-dark); }
+  .sms-toast-footer { padding: 8px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 6px; }
+
+  .sms-entry { padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+  .sms-entry:last-child { border-bottom: none; }
+  .sms-entry .sms-time { font-size: 11px; color: var(--text-light); font-family: monospace; }
+  .sms-entry .sms-badge { display: inline-block; background: #ede9fe; color: #6366f1; padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: 600; margin-left: 6px; }
+
+  .setup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .setup-card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 24px; box-shadow: var(--shadow); }
+  .setup-card h3 { font-size: 16px; margin-bottom: 12px; color: var(--primary-dark); }
+  .setup-card p, .setup-card li { font-size: 14px; line-height: 1.6; color: var(--text); }
+  .setup-card ul { margin-left: 16px; margin-top: 8px; }
+
+  .cost-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .cost-table th, .cost-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .cost-table th { font-weight: 600; color: var(--text-light); font-size: 12px; text-transform: uppercase; }
+
+  .highlight-box { background: linear-gradient(135deg, var(--primary-light), #d1fae5); border: 1px solid #a7f3d0; border-radius: 12px; padding: 20px; margin-top: 20px; }
+  .highlight-box h3 { color: var(--primary-dark); margin-bottom: 8px; }
+  .highlight-box p { font-size: 15px; line-height: 1.6; }
+
+  @media (max-width: 900px) {
+    .demo-layout { grid-template-columns: 1fr; }
+    .header { padding: 12px 16px; }
+    .main { padding: 16px; }
+    .header-stats { display: none; }
+    .nav-tabs { padding: 0 16px; overflow-x: auto; }
+  }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
+  .empty-state p { font-size: 14px; }
+</style>
 </head>
 <body>
-  <nav class="nav">
-    <a href="/src/index.html">Index</a>
-    <a href="/src/hub.html">Hub</a>
-    <a href="/src/live.html">Live</a>
-    <a href="/src/deck.html">Deck</a>
-  </nav>
-  <h1>${page}.html</h1>
-  <p>Static page: ${page}</p>
-  <p><em>Replace with actual content from original deployment</em></p>
+
+<div class="header">
+  <div class="header-brand">
+    <svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="rgba(255,255,255,0.15)"/><path d="M18 8c-5.5 0-10 4-10 9 0 3 1.5 5.5 4 7.2V28l3.5-2 2.5.5 2.5-.5 3.5 2v-3.8c2.5-1.7 4-4.2 4-7.2 0-5-4.5-9-10-9z" fill="white" opacity="0.9"/><circle cx="14" cy="16" r="1.5" fill="#1a6b4a"/><circle cx="22" cy="16" r="1.5" fill="#1a6b4a"/><path d="M14 20c0 0 2 2.5 4 2.5s4-2.5 4-2.5" stroke="#1a6b4a" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <div>
+      <h1>Deerwood Lake Chiropractic AI Assistant</h1>
+      <div class="subtitle">Dr. Anthony Fort &mdash; Smart Appointment Management</div>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="stat"><div class="stat-value" id="statCalls">0</div><div class="stat-label">Calls Today</div></div>
+    <div class="stat"><div class="stat-value" id="statBooked">0</div><div class="stat-label">Booked</div></div>
+    <div class="stat"><div class="stat-value" id="statSaved">0</div><div class="stat-label">Min Saved</div></div>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" data-tab="demo">Live Demo</div>
+  <div class="nav-tab" data-tab="calendar">Calendar</div>
+  <div class="nav-tab" data-tab="calls">Call Log</div>
+  <div class="nav-tab" data-tab="setup">Setup & Pricing</div>
+</div>
+
+<div class="main">
+  <div class="tab-content active" id="tab-demo">
+    <div class="demo-layout">
+      <div class="phone-frame">
+        <div class="phone-header">
+          <div class="phone-avatar"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div class="phone-caller-info"><h3>Deerwood Lake Chiropractic</h3><p id="callStatusText">Ready to demo</p></div>
+          <div class="call-status"><div class="call-dot" id="callDot"></div><span id="callTimer">00:00</span></div>
+        </div>
+        <div class="chat-area" id="chatArea"><div class="message system">Press the green button to simulate an incoming patient call</div></div>
+        <div class="response-options" id="responseOptions"></div>
+        <div class="phone-controls">
+          <button class="call-btn start" id="btnStart" onclick="startCall()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></button>
+          <button class="call-btn end" id="btnEnd" onclick="endCall()" disabled><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="side-panel">
+        <div class="card"><div class="card-header">📋 Live Booking Details</div><div class="card-body" id="bookingDetails"><div class="empty-state"><p>Start a call to see booking details appear in real-time</p></div></div></div>
+        <div class="card"><div class="card-header">📝 Call Summary</div><div class="card-body" id="callSummary"><div class="empty-state"><p>Call summary will appear after the call ends</p></div></div></div>
+        <div class="card"><div class="card-header">💬 SMS Notifications</div><div class="card-body" id="smsLog"><div class="empty-state"><p>SMS alerts to office manager will appear here</p></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sms-toast" id="smsToast">
+    <div class="sms-toast-header">💬 New SMS — Office Manager Alert</div>
+    <div class="sms-toast-body" id="smsToastBody"></div>
+    <div class="sms-toast-footer">✓ Delivered via Twilio</div>
+  </div>
+
+  <div class="tab-content" id="tab-calendar">
+    <div class="card">
+      <div class="card-header">📅 Appointment Calendar &mdash; Week of April 7, 2026</div>
+      <div class="card-body" style="padding: 0;"><div class="calendar-grid" id="calendarGrid"></div></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-calls">
+    <div class="card">
+      <div class="card-header">📞 Recent Call Log</div>
+      <div class="card-body" style="padding: 0;">
+        <table class="call-log-table"><thead><tr><th>Time</th><th>Caller</th><th>Reason</th><th>Duration</th><th>Outcome</th><th>Status</th></tr></thead><tbody id="callLogBody"></tbody></table>
+      </div>
+    </div>
+    <div class="call-summary-card" id="recentSummary" style="display:none;"><h3>Latest Call Summary</h3><ul id="recentSummaryList"></ul></div>
+  </div>
+
+  <div class="tab-content" id="tab-setup">
+    <div class="setup-grid">
+      <div class="setup-card">
+        <h3>How It Works</h3>
+        <p>The Deerwood Lake Chiropractic AI Assistant uses advanced conversational AI to handle incoming patient calls 24/7:</p>
+        <ul>
+          <li><strong>AI answers every call</strong> &mdash; no more voicemail, no missed patients</li>
+          <li><strong>Natural conversation</strong> &mdash; asks about visit type, insurance, scheduling preferences</li>
+          <li><strong>Direct calendar booking</strong> &mdash; appointments appear instantly on your schedule</li>
+          <li><strong>Smart summaries</strong> &mdash; front desk gets a brief for every call, every morning</li>
+          <li><strong>After-hours coverage</strong> &mdash; patients calling at 9 PM still get booked</li>
+        </ul>
+      </div>
+      <div class="setup-card">
+        <h3>Implementation Timeline</h3>
+        <ul>
+          <li><strong>Week 1:</strong> Setup AI phone number, configure practice hours and services, integrate with Google Calendar</li>
+          <li><strong>Week 2:</strong> Train AI on Deerwood Lake Chiropractic-specific info (providers, insurance, services), test with staff</li>
+          <li><strong>Week 3:</strong> Soft launch &mdash; AI handles overflow calls, staff reviews bookings</li>
+          <li><strong>Week 4:</strong> Full launch &mdash; AI becomes primary phone handler with staff backup</li>
+        </ul>
+      </div>
+      <div class="setup-card">
+        <h3>Service Plans</h3>
+        <table class="cost-table">
+          <thead><tr><th>Plan</th><th>Monthly Investment</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Tier 1: AI Receptionist</strong><br>24/7 call answering, appointment booking, SMS alerts, monthly analytics, ongoing AI optimization, dedicated support</td><td><strong>$1,500/mo</strong></td></tr>
+            <tr><td><strong>Tier 2: AI Receptionist + Patient Automation</strong><br>Everything in Tier 1 + automated appointment reminders, no-show follow-up sequences, digital new patient intake forms</td><td><strong>$2,250/mo</strong></td></tr>
+            <tr><td><strong>Tier 3: Full Practice Automation</strong><br>Everything in Tier 2 + post-visit follow-ups, Google review automation, patient reactivation campaigns, custom reporting dashboard</td><td><strong>$3,000/mo</strong></td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 12px; font-size: 13px; color: var(--text-light);">All plans include a 90-day pilot &mdash; month-to-month after that. No long-term contracts.</p>
+      </div>
+      <div class="setup-card">
+        <h3>What You Get</h3>
+        <ul>
+          <li>Dedicated AI phone number for the practice</li>
+          <li>Custom greeting branded as Deerwood Lake Chiropractic</li>
+          <li>24/7 availability &mdash; holidays, weekends, after-hours</li>
+          <li>Real-time calendar integration (Google Calendar, ChiroTouch, etc.)</li>
+          <li>Instant SMS alerts to office manager on every new booking</li>
+          <li>Daily call summary emails to front desk</li>
+          <li>Dashboard for call analytics and booking metrics</li>
+          <li>Monthly performance reports</li>
+          <li>Ongoing AI tuning and support</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <h3>ROI for Deerwood Lake Chiropractic</h3>
+      <p>With an estimated <strong>500+ calls/month</strong> and current staff overwhelmed during the building move, even capturing <strong>10 additional appointments per month</strong> that would otherwise go to voicemail represents <strong>$2,000 &ndash; $5,000 in recovered revenue</strong>. Starting at Tier 1 ($1,500/mo), the service pays for itself within the first month while freeing your staff to focus on patients in the office. During the transition period, this is the difference between missed calls and a full schedule.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let callActive = false, callStep = 0, timerInterval = null, callSeconds = 0;
+let totalCalls = 3, totalBooked = 2, totalSaved = 18;
+let bookingData = {};
+let callLog = [
+  { time: '9:15 AM', caller: 'Maria Santos', reason: 'Adjustment & wellness check', duration: '2:34', outcome: 'Booked Apr 8, 10:00 AM', status: 'confirmed' },
+  { time: '10:02 AM', caller: 'James Wilson', reason: 'Back pain (urgent)', duration: '1:48', outcome: 'Booked Apr 7, 2:00 PM', status: 'confirmed' },
+  { time: '11:30 AM', caller: 'Unknown', reason: 'Insurance inquiry', duration: '1:12', outcome: 'Transferred to front desk', status: 'transferred' },
+];
+let calendarEvents = {
+  'mon-9': { name: 'J. Wilson', type: 'Acute Visit' }, 'mon-10': { name: 'R. Chen', type: 'Adjustment' }, 'mon-14': { name: 'M. Santos', type: 'Wellness Check' },
+  'tue-9': { name: 'P. Johnson', type: 'Spinal Decompression' }, 'tue-11': { name: 'L. Garcia', type: 'Adjustment' },
+  'wed-10': { name: 'K. Brown', type: 'New Patient Eval' }, 'wed-15': { name: 'S. Davis', type: 'Consult' },
+  'thu-9': { name: 'A. Martinez', type: 'Adjustment' }, 'thu-13': { name: 'T. Lee', type: 'Rehab Therapy' },
+  'fri-10': { name: 'N. Taylor', type: 'Wellness Check' }, 'fri-14': { name: 'D. Thomas', type: 'Sports Injury' },
+};
+
+const conversationFlow = [
+  { ai: "Thank you for calling Deerwood Lake Chiropractic, the office of Dr. Anthony Fort. This is the AI scheduling assistant. How can I help you today?", options: [
+    { text: "Hi, I'd like to schedule an appointment for an adjustment.", next: 1 },
+    { text: "I have back pain and need to see the chiropractor soon.", next: 2 },
+    { text: "I'm a new patient, do you accept Blue Cross insurance?", next: 3 } ] },
+  { ai: "I'd be happy to help you schedule an adjustment! Are you an existing patient with us, or will this be your first visit?", options: [
+    { text: "I'm an existing patient. Last name is Thompson.", next: 4 },
+    { text: "I'm a new patient.", next: 5 } ] },
+  { ai: "I'm sorry to hear you're in pain. Let me help get you in as soon as possible. Can you describe the pain? Is it sharp, radiating, or constant?", options: [
+    { text: "It's a sharp pain in my lower back when I bend over.", next: 6 },
+    { text: "It's a constant dull ache in my neck that started yesterday.", next: 6 } ] },
+  { ai: "Yes, Deerwood Lake Chiropractic accepts most major insurance plans including Blue Cross Blue Shield, Aetna, United Healthcare, and Cigna. Would you like to schedule your first appointment with us?", options: [
+    { text: "Yes, I'd like to book an evaluation and adjustment.", next: 5 },
+    { text: "Great, I'll call back when I'm ready. Thanks!", next: 10 } ] },
+  { ai: "Welcome back! I found your file, Thompson. We have availability this week. Would you prefer a morning or afternoon appointment?", options: [
+    { text: "Morning works best for me.", next: 7 },
+    { text: "Afternoon, please. After 2 PM if possible.", next: 8 } ] },
+  { ai: "Welcome! We love new patients. I'll need a few details. Can I get your full name?", options: [
+    { text: "Sarah Mitchell.", next: 9 } ] },
+  { ai: "I understand. Given the symptoms, I'd recommend coming in as soon as possible. We have an opening tomorrow, Wednesday April 8th, at 9:00 AM. Dr. Fort can do a full evaluation and get you started on treatment. Would that work?", options: [
+    { text: "Yes, that works. Please book it.", next: 11, booking: { name: 'Caller', type: 'Acute Visit', date: 'Wed Apr 8', time: '9:00 AM', slot: 'wed-9' } },
+    { text: "Do you have anything later in the day?", next: 12 } ] },
+  { ai: "I have Thursday April 9th at 10:00 AM available for an adjustment. That's a 30-minute appointment. Shall I book that for you?", options: [
+    { text: "Yes, Thursday at 10 works perfectly!", next: 13, booking: { name: 'Thompson', type: 'Adjustment', date: 'Thu Apr 9', time: '10:00 AM', slot: 'thu-10' } },
+    { text: "Do you have anything on Friday instead?", next: 14 } ] },
+  { ai: "For afternoon availability, I have Wednesday April 8th at 2:30 PM or Friday April 10th at 3:00 PM. Which would you prefer?", options: [
+    { text: "Wednesday at 2:30 works for me.", next: 13, booking: { name: 'Thompson', type: 'Adjustment', date: 'Wed Apr 8', time: '2:30 PM', slot: 'wed-14' } },
+    { text: "I'll take Friday at 3.", next: 13, booking: { name: 'Thompson', type: 'Adjustment', date: 'Fri Apr 10', time: '3:00 PM', slot: 'fri-15' } } ] },
+  { ai: "Nice to meet you, Sarah! And do you have health insurance, or will this be a self-pay visit?", options: [
+    { text: "I have Blue Cross through my employer.", next: 15 },
+    { text: "No insurance, I'll be paying out of pocket.", next: 16 } ] },
+  { ai: "No problem at all! Feel free to call us anytime, or you can also book online. Have a great day!", options: [], autoEnd: true },
+  { ai: "You're all set! I've booked you for an acute evaluation with Dr. Fort on Wednesday April 8th at 9:00 AM. Please arrive 10 minutes early and wear comfortable clothing. If the pain becomes severe before then, don't hesitate to seek immediate medical attention. Is there anything else I can help with?", options: [
+    { text: "No, that's everything. Thank you!", next: 17 } ] },
+  { ai: "Absolutely. I also have 2:00 PM available on Wednesday April 8th. Would that work better?", options: [
+    { text: "Yes, 2 PM is better for me.", next: 11, booking: { name: 'Caller', type: 'Acute Visit', date: 'Wed Apr 8', time: '2:00 PM', slot: 'wed-14' } } ] },
+  { ai: "Wonderful, you're all booked! You'll receive a text confirmation shortly with the appointment details. We recommend arriving 10 minutes early. Is there anything else I can help you with today?", options: [
+    { text: "Nope, that's all. Thanks so much!", next: 17 },
+    { text: "Actually, can I also get directions to the new office?", next: 18 } ] },
+  { ai: "On Friday April 10th, I have 9:00 AM and 11:00 AM open for adjustments. Which do you prefer?", options: [
+    { text: "9 AM Friday is great.", next: 13, booking: { name: 'Thompson', type: 'Adjustment', date: 'Fri Apr 10', time: '9:00 AM', slot: 'fri-9' } },
+    { text: "11 AM works better.", next: 13, booking: { name: 'Thompson', type: 'Adjustment', date: 'Fri Apr 10', time: '11:00 AM', slot: 'fri-11' } } ] },
+  { ai: "Blue Cross, great. We're in-network with BCBS. I have a new patient slot available on Monday April 7th at 11:00 AM. The first visit includes a consultation, posture assessment, and adjustment &mdash; about 60 minutes. Does that work?", options: [
+    { text: "Monday at 11 is perfect!", next: 13, booking: { name: 'S. Mitchell', type: 'New Patient Eval', date: 'Mon Apr 7', time: '11:00 AM', slot: 'mon-11' } } ] },
+  { ai: "No problem! Our new patient evaluation including consultation, posture assessment, and first adjustment is $150 for self-pay patients. I have Monday April 7th at 11:00 AM available. It's about a 60-minute appointment. Would you like to book that?", options: [
+    { text: "Yes, that sounds good. Book me in!", next: 13, booking: { name: 'S. Mitchell', type: 'New Patient Eval', date: 'Mon Apr 7', time: '11:00 AM', slot: 'mon-11' } } ] },
+  { ai: "You're welcome! Thank you for choosing Deerwood Lake Chiropractic. We look forward to seeing you. Have a wonderful day!", options: [], autoEnd: true },
+  { ai: "Of course! Our new office is located at 1234 Oak Street, Suite 200. We're in the new medical plaza next to Walgreens, with plenty of free parking in the back. I can also text you a Google Maps link. Thank you for calling Deerwood Lake Chiropractic!", options: [], autoEnd: true }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateStats(); renderCallLog(); renderCalendar();
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+});
+
+function updateStats() { document.getElementById('statCalls').textContent = totalCalls; document.getElementById('statBooked').textContent = totalBooked; document.getElementById('statSaved').textContent = totalSaved; }
+
+function startCall() {
+  callActive = true; callStep = 0; callSeconds = 0; bookingData = {};
+  document.getElementById('btnStart').disabled = true; document.getElementById('btnEnd').disabled = false;
+  document.getElementById('callDot').classList.add('active'); document.getElementById('callStatusText').textContent = 'Call in progress';
+  document.getElementById('chatArea').innerHTML = ''; document.getElementById('responseOptions').innerHTML = '';
+  document.getElementById('bookingDetails').innerHTML = '<div class="empty-state"><p>Listening for booking details...</p></div>';
+  document.getElementById('callSummary').innerHTML = '<div class="empty-state"><p>Summary will appear after the call</p></div>';
+  timerInterval = setInterval(() => { callSeconds++; document.getElementById('callTimer').textContent = `${String(Math.floor(callSeconds/60)).padStart(2,'0')}:${String(callSeconds%60).padStart(2,'0')}`; }, 1000);
+  addMessage('system', 'Incoming call connected'); setTimeout(() => showStep(0), 800);
+}
+
+function endCall() {
+  callActive = false; clearInterval(timerInterval);
+  document.getElementById('btnStart').disabled = false; document.getElementById('btnEnd').disabled = true;
+  document.getElementById('callDot').classList.remove('active'); document.getElementById('callStatusText').textContent = 'Call ended';
+  document.getElementById('responseOptions').innerHTML = ''; addMessage('system', 'Call ended');
+  totalCalls++; totalSaved += Math.floor(callSeconds/10) + 2;
+  const duration = `${Math.floor(callSeconds/60)}:${String(callSeconds%60).padStart(2,'0')}`;
+  if (bookingData.name) {
+    totalBooked++;
+    callLog.unshift({ time: new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}), caller: bookingData.name, reason: bookingData.type, duration, outcome: `Booked ${bookingData.date}, ${bookingData.time}`, status: 'confirmed' });
+    if (bookingData.slot) { calendarEvents[bookingData.slot] = { name: bookingData.name, type: bookingData.type }; renderCalendar(); }
+    showCallSummary();
+  } else {
+    callLog.unshift({ time: new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}), caller: 'Patient', reason: 'General inquiry', duration, outcome: 'Info provided', status: 'completed' });
+  }
+  updateStats(); renderCallLog();
+}
+
+function showStep(idx) {
+  if (!callActive || !conversationFlow[idx]) return;
+  callStep = idx; const step = conversationFlow[idx];
+  addMessage('ai', step.ai);
+  if (step.autoEnd) { setTimeout(() => endCall(), 2000); return; }
+  setTimeout(() => {
+    if (!callActive) return;
+    const el = document.getElementById('responseOptions'); el.innerHTML = '';
+    step.options.forEach(opt => { const btn = document.createElement('button'); btn.className = 'response-btn'; btn.textContent = opt.text; btn.onclick = () => selectResponse(opt); el.appendChild(btn); });
+  }, 600);
+}
+
+function selectResponse(opt) {
+  if (!callActive) return;
+  document.getElementById('responseOptions').innerHTML = ''; addMessage('user', opt.text);
+  if (opt.booking) { bookingData = { ...opt.booking }; updateBookingPanel(); }
+  setTimeout(() => showStep(opt.next), 1000);
+}
+
+function addMessage(type, text) {
+  const chat = document.getElementById('chatArea'); const div = document.createElement('div'); div.className = `message ${type}`;
+  if (type === 'ai') div.innerHTML = `<div class="sender">AI Assistant</div>${text}`;
+  else if (type === 'user') div.innerHTML = `<div class="sender">Patient</div>${text}`;
+  else div.textContent = text;
+  chat.appendChild(div); chat.scrollTop = chat.scrollHeight;
+}
+
+function updateBookingPanel() {
+  document.getElementById('bookingDetails').innerHTML = `
+    <div class="booking-detail"><span class="label">Patient</span><span class="value">${bookingData.name}</span></div>
+    <div class="booking-detail"><span class="label">Visit Type</span><span class="value">${bookingData.type}</span></div>
+    <div class="booking-detail"><span class="label">Date</span><span class="value">${bookingData.date}</span></div>
+    <div class="booking-detail"><span class="label">Time</span><span class="value">${bookingData.time}</span></div>
+    <div class="booking-detail"><span class="label">Status</span><span class="value"><span class="badge badge-success">Confirmed</span></span></div>`;
+}
+
+function showCallSummary() {
+  document.getElementById('callSummary').innerHTML = `
+    <div class="booking-detail"><span class="label">Call Duration</span><span class="value">${Math.floor(callSeconds/60)}m ${callSeconds%60}s</span></div>
+    <div class="booking-detail"><span class="label">Outcome</span><span class="value"><span class="badge badge-success">Appointment Booked</span></span></div>
+    <div class="booking-detail"><span class="label">Patient</span><span class="value">${bookingData.name}</span></div>
+    <div class="booking-detail"><span class="label">Appointment</span><span class="value">${bookingData.type}<br>${bookingData.date} at ${bookingData.time}</span></div>
+    <div class="booking-detail"><span class="label">Follow-up</span><span class="value">Text confirmation sent</span></div>
+    <div class="booking-detail"><span class="label">SMS Alert</span><span class="value"><span class="badge badge-info">Sent to Office Manager</span></span></div>`;
+  setTimeout(() => showSmsNotification(), 800);
+}
+
+let smsHistory = [];
+function showSmsNotification() {
+  const now = new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit',second:'2-digit'});
+  const isNew = bookingData.type && bookingData.type.toLowerCase().includes('new');
+  const patientType = isNew ? 'New Patient' : 'Existing Patient';
+  document.getElementById('smsToastBody').innerHTML = `
+    <div class="sms-from">From: Deerwood Lake Chiropractic AI &bull; To: Office Manager (555-0142)</div>
+    <div class="sms-line"><strong>NEW BOOKING</strong></div>
+    <div class="sms-line"><strong>Patient:</strong> ${bookingData.name}</div>
+    <div class="sms-line"><strong>Date/Time:</strong> ${bookingData.date} at ${bookingData.time}</div>
+    <div class="sms-line"><strong>Reason:</strong> ${bookingData.type}</div>
+    <div class="sms-line"><strong>Type:</strong> ${patientType}</div>`;
+  const toast = document.getElementById('smsToast'); toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 6000);
+  smsHistory.unshift({ time: now, patient: bookingData.name, type: bookingData.type, date: bookingData.date, patientType });
+  renderSmsLog();
+}
+
+function renderSmsLog() {
+  const el = document.getElementById('smsLog');
+  if (smsHistory.length === 0) { el.innerHTML = '<div class="empty-state"><p>SMS alerts to office manager will appear here</p></div>'; return; }
+  el.innerHTML = smsHistory.map(s => `<div class="sms-entry"><span class="sms-time">${s.time}</span><span class="sms-badge">SMS SENT</span><div style="margin-top:4px;"><strong>${s.patient}</strong> — ${s.type}</div><div style="color:var(--text-light);">${s.date} &bull; ${s.patientType}</div></div>`).join('');
+}
+
+function renderCallLog() {
+  document.getElementById('callLogBody').innerHTML = callLog.map(c => `<tr><td>${c.time}</td><td><strong>${c.caller}</strong></td><td>${c.reason}</td><td>${c.duration}</td><td>${c.outcome}</td><td><span class="badge ${c.status==='confirmed'?'badge-success':c.status==='transferred'?'badge-info':'badge-pending'}">${c.status}</span></td></tr>`).join('');
+  if (callLog.length > 0 && callLog[0].status === 'confirmed') {
+    document.getElementById('recentSummary').style.display = 'block';
+    document.getElementById('recentSummaryList').innerHTML = `<li>Patient <strong>${callLog[0].caller}</strong> called at ${callLog[0].time}</li><li>Reason: ${callLog[0].reason}</li><li>AI completed booking in ${callLog[0].duration} — no staff intervention needed</li><li>Outcome: ${callLog[0].outcome}</li><li>Confirmation text sent to patient automatically</li>`;
+  }
+}
+
+function renderCalendar() {
+  const days = ['', 'Mon 4/7', 'Tue 4/8', 'Wed 4/9', 'Thu 4/10', 'Fri 4/11'];
+  const hours = [8,9,10,11,12,13,14,15,16]; const dayKeys = ['', 'mon','tue','wed','thu','fri'];
+  let html = days.map(d => `<div class="cal-header">${d}</div>`).join('');
+  hours.forEach(h => {
+    const label = h===12?'12:00 PM':h>12?`${h-12}:00 PM`:`${h}:00 AM`;
+    html += `<div class="cal-time">${label}</div>`;
+    for (let d=1; d<=5; d++) { const key = `${dayKeys[d]}-${h}`; const evt = calendarEvents[key]; html += `<div class="cal-slot">${evt?`<div class="cal-event"><div class="event-name">${evt.name}</div><div class="event-type">${evt.type}</div></div>`:''}</div>`; }
+  });
+  document.getElementById('calendarGrid').innerHTML = html;
+}
+</script>
 </body>
 </html>
