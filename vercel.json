@@ -1,0 +1,14 @@
+{
+  "name": "dr-fort-vercel",
+  "framework": "nextjs",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev",
+  "rewrites": [
+    {
+      "source": "/src/:path*",
+      "destination": "/src/:path*"
+    }
+  ]
+}
