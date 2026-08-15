@@ -92,11 +92,8 @@
   </div>
 </div>
 
-<script type="module">
-import VapiClass from "https://cdn.jsdelivr.net/npm/@vapi-ai/web@2.5.2/+esm";
-window.Vapi = VapiClass;
-window.VapiLoaded = true;
-</script>
+<!-- Vapi Web SDK (UMD bundle — reliable browser loading) -->
+<script src="https://cdn.jsdelivr.net/npm/@vapi-ai/web@2.5.2/dist/index.global.js"></script>
 <script>
 const VAPI_PUBLIC_KEY = '0abcf8e8-4e08-4fa6-978b-d262a8353b09';
 const VAPI_ASSISTANT_ID = 'd96f4ce5-533b-405f-819c-c951c0af4884';
@@ -155,13 +152,16 @@ let vapi = null, callSeconds = 0, timerInterval = null, isMuted = false;
 
 function initVapi() {
   try {
-    if (window.Vapi) {
-      vapi = new window.Vapi(VAPI_PUBLIC_KEY);
+    if (typeof Vapi !== 'undefined') {
+      vapi = new Vapi(VAPI_PUBLIC_KEY);
       setupVapiEvents();
-    } else { setTimeout(initVapi, 500); }
+    } else {
+      // UMD script still loading — retry
+      setTimeout(initVapi, 500);
+    }
   } catch (e) { showError('Failed to initialize Vapi: ' + e.message); }
 }
-document.addEventListener('DOMContentLoaded', () => { setTimeout(initVapi, 1500); });
+document.addEventListener('DOMContentLoaded', () => { setTimeout(initVapi, 300); });
 
 function setupVapiEvents() {
   vapi.on('call-start', () => { setStatus('active','Connected'); document.getElementById('timerLabel').textContent='AI is speaking...'; document.getElementById('transcriptLog').innerHTML=''; startTimer(); });
