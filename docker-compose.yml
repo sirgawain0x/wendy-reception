@@ -1,0 +1,43 @@
+# Wendy Reception — Development Docker Compose
+# Runs Wendy + Ollama for local development.
+
+version: '3.8'
+
+services:
+  wendy:
+    build:
+      context: .
+      dockerfile: docker/edge.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - WENDY_MODE=edge
+      - EDGE_MODEL_ENDPOINT=http://ollama:11434
+      - EDGE_FAST_MODEL=nemotron-mini
+      - CENTRAL_MODEL_ENDPOINT=http://ollama:11434
+      - CENTRAL_REASONING_MODEL=nemotron-mini
+    depends_on:
+      - ollama
+    volumes:
+      - ./config:/app/config
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    # For GPU support, uncomment:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  ollama-models:

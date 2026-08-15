@@ -1,0 +1,60 @@
+# Wendy Reception — Routing Configuration
+# Model routing rules for the Switchyard router.
+# Each task type maps to a preferred model + optional fallback.
+
+models:
+  edge_fast:
+    provider: ollama
+    endpoint: ${EDGE_MODEL_ENDPOINT}
+    model: ${EDGE_FAST_MODEL}
+    max_tokens: 256
+    temperature: 0.7
+
+  central_reasoning:
+    provider: ollama
+    endpoint: ${CENTRAL_MODEL_ENDPOINT}
+    model: ${CENTRAL_REASONING_MODEL}
+    max_tokens: 1024
+    temperature: 0.7
+
+  external_reasoning:
+    provider: openai
+    endpoint: ${EXTERNAL_MODEL_ENDPOINT}
+    model: ${EXTERNAL_MODEL}
+    api_key_env: EXTERNAL_MODEL_API_KEY
+    max_tokens: 1024
+    temperature: 0.7
+
+routing:
+  simple_conversation:
+    preferred: edge_fast
+    fallback: central_reasoning
+
+  appointment_scheduling:
+    preferred: edge_fast
+    fallback: central_reasoning
+
+  faq:
+    preferred: edge_fast
+    fallback: central_reasoning
+
+  patient_intake:
+    preferred: edge_fast
+    fallback: central_reasoning
+
+  complex_reasoning:
+    preferred: central_reasoning
+    fallback: edge_fast
+
+  document_analysis:
+    preferred: central_reasoning
+    fallback: edge_fast
+
+  external_reasoning:
+    privacy_required: anonymized
+    provider: external
+
+defaults:
+  confidence_threshold: 0.7
+  max_retries: 3
+  timeout_ms: 30000

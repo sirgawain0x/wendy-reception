@@ -1,0 +1,40 @@
+# Wendy Reception — Agent Configuration
+# Default agent settings. Per-office overrides in config/offices/.
+
+agents:
+  receptionist:
+    enabled: true
+    tools:
+      - get_office_hours
+      - search_knowledge_base
+      - get_calendar_availability
+      - create_appointment
+      - reschedule_appointment
+      - cancel_appointment
+      - send_sms
+      - handoff_to_human
+
+  scheduling:
+    enabled: true
+    tools:
+      - get_calendar_availability
+      - create_appointment
+      - reschedule_appointment
+      - cancel_appointment
+      - send_sms
+
+  knowledge:
+    enabled: true
+    tools:
+      - search_knowledge_base
+      - get_office_hours
+
+  # Future agents (disabled by default)
+  intake:
+    enabled: false
+
+  follow_up:
+    enabled: false
+
+  office_manager:
+    enabled: false

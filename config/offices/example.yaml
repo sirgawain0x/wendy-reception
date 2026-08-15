@@ -1,0 +1,31 @@
+# Example office configuration
+# Copy this file and rename to <office_id>.yaml for each office.
+
+office:
+  id: office_example
+  name: Example Dental
+  timezone: America/New_York
+
+agents:
+  receptionist:
+    enabled: true
+  scheduling:
+    enabled: true
+  knowledge:
+    enabled: true
+  intake:
+    enabled: false
+
+routing:
+  edge_enabled: true
+  central_enabled: true
+  external_enabled: false
+
+privacy:
+  external_phi: deny
+  anonymization: required
+
+network:
+  central_endpoint: http://central.wendy.local:8080
+  tailscale_enabled: true
+  offline_mode: true
