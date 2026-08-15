@@ -1,10 +1,9 @@
 # Example office configuration
 # Copy this file and rename to <office_id>.yaml for each office.
 
-office:
-  id: office_example
-  name: Example Dental
-  timezone: America/New_York
+id: office_example
+name: Example Dental
+timezone: America/New_York
 
 agents:
   receptionist:
