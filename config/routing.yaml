@@ -1,8 +1,16 @@
 # Wendy Reception — Routing Configuration
 # Model routing rules for the Switchyard router.
 # Each task type maps to a preferred model + optional fallback.
+#
+# Default model: NVIDIA Nemotron 3.5 Lightning (30B MoE, 3B active)
+# Available on Ollama: ollama run nemotron-3.5-lightning
 
 models:
+  # ─── Tier 0: Edge Fast Model ───────────────────────────────────
+  # Runs on Jetson Orin Nano Super at each office.
+  # nemotron-3.5-lightning is 25GB — too large for Jetson Orin Nano (16GB).
+  # For edge, use a smaller model. The default below is a placeholder;
+  # set EDGE_FAST_MODEL to a model that fits your edge hardware.
   edge_fast:
     provider: ollama
     endpoint: ${EDGE_MODEL_ENDPOINT}
@@ -10,6 +18,10 @@ models:
     max_tokens: 256
     temperature: 0.7
 
+  # ─── Tier 1: Central Reasoning Model ────────────────────────────
+  # Runs on the central NVIDIA GPU server.
+  # nemotron-3.5-lightning is the default — 30B MoE with 3B active params,
+  # 1M context window, designed for always-on agents.
   central_reasoning:
     provider: ollama
     endpoint: ${CENTRAL_MODEL_ENDPOINT}
@@ -17,11 +29,50 @@ models:
     max_tokens: 1024
     temperature: 0.7
 
-  external_reasoning:
+  # ─── Switchyard (optional proxy layer) ──────────────────────────
+  # When enabled, all model requests go through Switchyard, which handles
+  # routing across providers (Ollama, OpenAI, Anthropic, Gemini, xAI, NIM).
+  # Enable by setting SWITCHYARD_ENDPOINT.
+  switchyard:
+    provider: switchyard
+    endpoint: ${SWITCHYARD_ENDPOINT}
+    model: ${SWITCHYARD_ROUTE_ID}
+    max_tokens: 1024
+    temperature: 0.7
+
+  # ─── Tier 2: External Models (escalation only) ──────────────────
+  # Each provider is configured separately. External models MUST NOT
+  # receive raw PHI — anonymization is enforced before routing.
+
+  external_openai:
     provider: openai
-    endpoint: ${EXTERNAL_MODEL_ENDPOINT}
-    model: ${EXTERNAL_MODEL}
-    api_key_env: EXTERNAL_MODEL_API_KEY
+    endpoint: https://api.openai.com
+    model: ${EXTERNAL_OPENAI_MODEL}
+    api_key_env: OPENAI_API_KEY
+    max_tokens: 1024
+    temperature: 0.7
+
+  external_anthropic:
+    provider: anthropic
+    endpoint: https://api.anthropic.com
+    model: ${EXTERNAL_ANTHROPIC_MODEL}
+    api_key_env: ANTHROPIC_API_KEY
+    max_tokens: 1024
+    temperature: 0.7
+
+  external_gemini:
+    provider: gemini
+    endpoint: https://generativelanguage.googleapis.com/v1beta/openai
+    model: ${EXTERNAL_GEMINI_MODEL}
+    api_key_env: GEMINI_API_KEY
+    max_tokens: 1024
+    temperature: 0.7
+
+  external_xai:
+    provider: xai
+    endpoint: https://api.x.ai
+    model: ${EXTERNAL_XAI_MODEL}
+    api_key_env: XAI_API_KEY
     max_tokens: 1024
     temperature: 0.7
 
@@ -58,3 +109,5 @@ defaults:
   confidence_threshold: 0.7
   max_retries: 3
   timeout_ms: 30000
+  # Default model for central tier
+  default_central_model: nemotron-3.5-lightning

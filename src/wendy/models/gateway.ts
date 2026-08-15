@@ -9,6 +9,9 @@ import { Switchyard } from './switchyard';
 import { FallbackHandler } from './fallback';
 import { OllamaProvider } from './providers/ollama';
 import { OpenAICompatibleProvider } from './providers/openai';
+import { AnthropicProvider } from './providers/anthropic';
+import { GeminiProvider } from './providers/gemini';
+import { SwitchyardProvider } from './providers/switchyard';
 import { AuditLogger } from '../audit/logger';
 
 export class ModelGateway {
@@ -121,13 +124,21 @@ export class ModelGateway {
     switch (config.provider.toLowerCase()) {
       case 'ollama':
         return new OllamaProvider(config);
+      case 'switchyard':
+        return new SwitchyardProvider(config);
       case 'openai':
       case 'openai-compatible':
-      case 'anthropic':
         return new OpenAICompatibleProvider(config);
+      case 'anthropic':
+        return new AnthropicProvider(config);
+      case 'gemini':
+        return new GeminiProvider(config);
       case 'nvidia':
       case 'nim':
         return new OpenAICompatibleProvider(config); // NIM uses OpenAI-compatible API
+      case 'xai':
+      case 'grok':
+        return new OpenAICompatibleProvider(config); // Grok uses OpenAI-compatible API
       default:
         // Default to OpenAI-compatible for unknown providers
         return new OpenAICompatibleProvider(config);
