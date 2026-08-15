@@ -13,6 +13,7 @@ import { ReceptionistAgent } from '../agents/receptionist';
 import { SchedulingAgent } from '../agents/scheduling';
 import { KnowledgeAgent } from '../agents/knowledge';
 import { PrivacyPolicyEngine } from '../privacy/policy';
+import { NeMoAnonymizer } from '../privacy/anonymizer';
 import { RoutingPolicy } from '../policy/routing';
 import { SafetyEngine } from '../policy/safety';
 import { MetricsCollector } from '../observability/metrics';
@@ -56,8 +57,20 @@ export class WendyRuntime {
     this.config = config;
     this.audit = new AuditLogger(new ConsoleAuditSink());
 
-    // Create model gateway
-    this.gateway = new ModelGateway(config.models, config.routing, this.audit);
+    // Create privacy policy engine (with a local-fallback anonymizer) BEFORE the
+    // gateway so it can enforce PHI anonymization on every model request that
+    // routes to an external provider.
+    this.privacyEngine = new PrivacyPolicyEngine(
+      new NeMoAnonymizer({ strategy: 'redact', fallback_to_local: true }),
+    );
+
+    // Create model gateway — privacy enforcement is wired into every completion.
+    this.gateway = new ModelGateway(
+      config.models,
+      config.routing,
+      this.audit,
+      this.privacyEngine,
+    );
 
     // Create tool registry
     this.tools = new ToolRegistry();
@@ -76,7 +89,6 @@ export class WendyRuntime {
     );
 
     // Create policy engines
-    this.privacyEngine = new PrivacyPolicyEngine();
     this.routingPolicy = new RoutingPolicy(this.privacyEngine, config.routing);
     this.safetyEngine = new SafetyEngine();
     this.metrics = new MetricsCollector();
