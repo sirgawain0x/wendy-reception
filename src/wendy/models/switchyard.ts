@@ -43,7 +43,7 @@ export class Switchyard {
     }
 
     // Last resort: try any available provider
-    for (const [key] of this.providers) {
+    for (const [key] of Array.from(this.providers)) {
       if (this.checkAvailability(key)) {
         return this.buildDecision(key, request, true);
       }
@@ -122,7 +122,7 @@ export class Switchyard {
    * Force a health refresh (called by health monitor).
    */
   async refreshHealth(): Promise<void> {
-    for (const [key, provider] of this.providers) {
+    for (const [key, provider] of Array.from(this.providers)) {
       const health = await provider.health();
       this.healthCache.set(key, {
         available: health.available,

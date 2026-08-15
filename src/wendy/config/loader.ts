@@ -116,7 +116,7 @@ export class ConfigLoader {
       const parsed = parseYAML(routingText) as Record<string, unknown>;
       if (parsed.models) config.models = parsed.models as typeof config.models;
       if (parsed.routing) config.routing = parsed.routing as typeof config.routing;
-      if (parsed.defaults) config.defaults = { ...config.defaults, ...parsed.defaults };
+      if (parsed.defaults) config.defaults = { ...config.defaults, ...parsed.defaults } as typeof config.defaults;
     }
 
     // Load agent config
@@ -161,31 +161,31 @@ export class ConfigLoader {
 
     if (env.EDGE_MODEL_ENDPOINT && env.EDGE_FAST_MODEL) {
       models.edge_fast = {
+        ...models.edge_fast,
         provider: env.EDGE_MODEL_PROVIDER || 'ollama',
         endpoint: env.EDGE_MODEL_ENDPOINT,
         model: env.EDGE_FAST_MODEL,
         api_key_env: env.EDGE_MODEL_API_KEY_ENV,
-        ...models.edge_fast,
       };
     }
 
     if (env.CENTRAL_MODEL_ENDPOINT && env.CENTRAL_REASONING_MODEL) {
       models.central_reasoning = {
+        ...models.central_reasoning,
         provider: env.CENTRAL_MODEL_PROVIDER || 'ollama',
         endpoint: env.CENTRAL_MODEL_ENDPOINT,
         model: env.CENTRAL_REASONING_MODEL,
         api_key_env: env.CENTRAL_MODEL_API_KEY_ENV,
-        ...models.central_reasoning,
       };
     }
 
     if (env.EXTERNAL_MODEL_ENDPOINT && env.EXTERNAL_MODEL) {
       models.external_reasoning = {
+        ...models.external_reasoning,
         provider: env.EXTERNAL_MODEL_PROVIDER || 'openai',
         endpoint: env.EXTERNAL_MODEL_ENDPOINT,
         model: env.EXTERNAL_MODEL,
         api_key_env: 'EXTERNAL_MODEL_API_KEY',
-        ...models.external_reasoning,
       };
     }
 

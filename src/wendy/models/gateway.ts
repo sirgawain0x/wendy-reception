@@ -218,7 +218,7 @@ export class ModelGateway {
    */
   async healthCheck(): Promise<ModelHealth[]> {
     const results: ModelHealth[] = [];
-    for (const [key, provider] of this.switchyard.getAllProviders()) {
+    for (const [key, provider] of Array.from(this.switchyard.getAllProviders())) {
       const health = await provider.health();
       results.push(health);
     }

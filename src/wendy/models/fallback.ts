@@ -39,7 +39,7 @@ export class FallbackHandler {
     }
 
     // Find a provider for the fallback tier
-    for (const [key, provider] of this.providers) {
+    for (const [key, provider] of Array.from(this.providers)) {
       if (key.startsWith(fallbackTier) && provider.isAvailable()) {
         const isExternal = fallbackTier === 'external' as ModelTier;
         return {
@@ -55,7 +55,7 @@ export class FallbackHandler {
     }
 
     // Absolute last resort: any available provider
-    for (const [key, provider] of this.providers) {
+    for (const [key, provider] of Array.from(this.providers)) {
       if (provider.isAvailable()) {
         return {
           tier: key.startsWith('edge') ? 'edge' : key.startsWith('central') ? 'central' : 'external',
