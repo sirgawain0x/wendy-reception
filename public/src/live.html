@@ -1,24 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr Fort - ${page}</title>
-  <style>
-    body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 2rem; }
-    .nav { margin-bottom: 2rem; }
-    .nav a { margin-right: 1rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deerwood Lake Chiropractic AI — Live Call Demo</title>
+<style>
+  :root { --primary: #1a6b4a; --primary-light: #e8f5ee; --primary-dark: #0f4a32; --bg: #f5f7fa; --card: #ffffff; --text: #1a1a2e; --text-light: #6b7280; --border: #e5e7eb; --danger: #ef4444; --success: #10b981; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .container { max-width: 480px; width: 100%; padding: 20px; }
+  .brand { text-align: center; margin-bottom: 32px; }
+  .brand h1 { font-size: 24px; color: var(--primary-dark); margin-bottom: 4px; }
+  .brand p { color: var(--text-light); font-size: 14px; }
+  .phone-card { background: var(--card); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); overflow: hidden; border: 1px solid var(--border); }
+  .phone-top { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 32px 24px; text-align: center; }
+  .phone-top .avatar { width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+  .phone-top h2 { font-size: 20px; font-weight: 600; }
+  .phone-top .status { font-size: 13px; opacity: 0.85; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #6b7280; }
+  .status-dot.idle { background: #6b7280; }
+  .status-dot.connecting { background: #f59e0b; animation: pulse 1s infinite; }
+  .status-dot.active { background: #10b981; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .phone-body { padding: 32px 24px; text-align: center; }
+  .timer { font-size: 40px; font-weight: 200; font-family: 'SF Mono', 'Fira Code', monospace; color: var(--text); margin-bottom: 8px; }
+  .timer-label { font-size: 13px; color: var(--text-light); margin-bottom: 32px; }
+  .call-btn { width: 72px; height: 72px; border-radius: 50%; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; margin: 0 12px; }
+  .call-btn:active { transform: scale(0.95); }
+  .call-btn.start { background: var(--success); color: white; box-shadow: 0 4px 16px rgba(16,185,129,0.4); }
+  .call-btn.start:hover { background: #059669; }
+  .call-btn.end { background: var(--danger); color: white; box-shadow: 0 4px 16px rgba(239,68,68,0.4); }
+  .call-btn.end:hover { background: #dc2626; }
+  .call-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+  .call-btn svg { width: 28px; height: 28px; }
+  .mute-btn { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: white; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin: 0 8px; transition: all 0.2s; }
+  .mute-btn:hover { background: #f3f4f6; }
+  .mute-btn.active { background: var(--danger); border-color: var(--danger); }
+  .mute-btn.active svg { stroke: white; }
+  .mute-btn svg { width: 20px; height: 20px; stroke: var(--text-light); }
+  .transcript-area { margin-top: 20px; padding: 16px 24px 24px; border-top: 1px solid var(--border); }
+  .transcript-area h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); margin-bottom: 12px; }
+  .transcript-log { max-height: 200px; overflow-y: auto; font-size: 13px; line-height: 1.6; text-align: left; }
+  .transcript-log::-webkit-scrollbar { width: 3px; }
+  .transcript-log::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+  .transcript-entry { padding: 4px 0; animation: fadeIn 0.3s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .transcript-entry .speaker { font-weight: 600; color: var(--primary); }
+  .transcript-entry .speaker.user { color: #2563eb; }
+  .info-bar { margin-top: 24px; padding: 16px; background: var(--primary-light); border-radius: 12px; font-size: 13px; line-height: 1.6; text-align: center; color: var(--primary-dark); }
+  .info-bar strong { display: block; margin-bottom: 4px; }
+  .error-msg { margin-top: 12px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #991b1b; font-size: 13px; display: none; }
+</style>
 </head>
 <body>
-  <nav class="nav">
-    <a href="/src/index.html">Index</a>
-    <a href="/src/hub.html">Hub</a>
-    <a href="/src/live.html">Live</a>
-    <a href="/src/deck.html">Deck</a>
-  </nav>
-  <h1>${page}.html</h1>
-  <p>Static page: ${page}</p>
-  <p><em>Replace with actual content from original deployment</em></p>
+
+<div class="container">
+  <div class="brand">
+    <h1>Deerwood Lake Chiropractic AI</h1>
+    <p>Live Voice Demo &mdash; Dr. Anthony Fort</p>
+  </div>
+
+  <div class="phone-card">
+    <div class="phone-top">
+      <div class="avatar"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+      <h2>Deerwood Lake Chiropractic Receptionist</h2>
+      <div class="status"><span class="status-dot" id="statusDot"></span><span id="statusText">Ready</span></div>
+    </div>
+    <div class="phone-body">
+      <div class="timer" id="timer">00:00</div>
+      <div class="timer-label" id="timerLabel">Tap the green button to start a live call</div>
+      <div class="controls">
+        <button class="call-btn start" id="btnStart" onclick="startCall()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></button>
+        <button class="call-btn end" id="btnEnd" onclick="endCall()" disabled><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+    <div class="transcript-area">
+      <h3>Live Transcript</h3>
+      <div class="transcript-log" id="transcriptLog"><div style="color: var(--text-light); text-align: center; padding: 16px; font-size: 13px;">Transcript will appear here during the call</div></div>
+    </div>
+  </div>
+
+  <div class="info-bar">
+    <strong>How to demo for Dr. Fort</strong>
+    Click the green button and speak naturally — the AI will answer as Deerwood Lake Chiropractic's receptionist and walk you through booking an appointment.
+  </div>
+
+  <div class="info-bar" style="background: #dbeafe; color: #1e40af; margin-top: 12px;">
+    <strong>Live Phone Number</strong>
+    Call <strong>+1 (610) 813-9049</strong> from any phone to talk to the AI receptionist directly.
+  </div>
+</div>
+
+<script type="module">
+import VapiClass from "https://cdn.jsdelivr.net/npm/@vapi-ai/web@2.5.2/+esm";
+window.Vapi = VapiClass;
+window.VapiLoaded = true;
+</script>
+<script>
+const VAPI_PUBLIC_KEY = '0abcf8e8-4e08-4fa6-978b-d262a8353b09';
+const VAPI_ASSISTANT_ID = 'd96f4ce5-533b-405f-819c-c951c0af4884';
+
+const INLINE_ASSISTANT = {
+  model: {
+    provider: 'openai',
+    model: 'gpt-4o',
+    messages: [{
+      role: 'system',
+      content: `You are the AI scheduling assistant for Deerwood Lake Chiropractic, the office of Dr. Anthony Fort. You answer incoming patient calls professionally and warmly.
+
+## Your Personality
+- Professional but friendly chiropractic office receptionist
+- Calm, patient, and helpful
+- You speak naturally, using contractions and conversational language
+- Keep responses concise — this is a phone call, not an email
+
+## What You Do
+1. Greet callers warmly
+2. Determine their need: appointment booking, acute pain visit, insurance question, or general inquiry
+3. For appointments, collect: new or existing patient, full name, reason for visit (adjustment, back pain, neck pain, sports injury, wellness), preferred date and time, insurance provider
+4. Offer available slots:
+   - Monday Apr 7: 9 AM, 11 AM, 3 PM
+   - Tuesday Apr 8: 9 AM, 10 AM, 2 PM, 4 PM
+   - Wednesday Apr 9: 9 AM, 10 AM, 2:30 PM
+   - Thursday Apr 10: 10 AM, 1 PM, 3 PM
+   - Friday Apr 11: 9 AM, 11 AM, 2 PM
+5. Confirm the booking and tell them they'll receive a text confirmation
+6. For acute pain: express empathy, book earliest slot, recommend ER if severe trauma
+
+## Insurance Accepted
+Blue Cross Blue Shield, Aetna, United Healthcare, Cigna, MetLife, Guardian, Humana
+
+## Practice Info
+- Address: 1234 Oak Street, Suite 200, new medical plaza next to Walgreens
+- Hours: Monday-Friday, 8 AM - 5 PM
+- New patient evaluation with consultation, posture assessment, and first adjustment: $150 self-pay
+
+## Rules
+- Never provide medical advice or diagnose conditions
+- For true emergencies (severe trauma, loss of sensation), direct to 911
+- Be brief and efficient
+- End with: "Thank you for calling Deerwood Lake Chiropractic. We look forward to seeing you!"`
+    }]
+  },
+  voice: { provider: '11labs', voiceId: '21m00Tcm4TlvDq8ikWAM', stability: 0.6, similarityBoost: 0.75 },
+  firstMessage: "Thank you for calling Deerwood Lake Chiropractic, the office of Dr. Anthony Fort. This is the AI scheduling assistant. How can I help you today?",
+  transcriber: { provider: 'deepgram', model: 'nova-2', language: 'en-US' },
+  endCallMessage: "Thank you for calling Deerwood Lake Chiropractic. We look forward to seeing you! Goodbye.",
+  silenceTimeoutSeconds: 30,
+  maxDurationSeconds: 300
+};
+
+let vapi = null, callSeconds = 0, timerInterval = null, isMuted = false;
+
+function initVapi() {
+  try {
+    if (window.Vapi) {
+      vapi = new window.Vapi(VAPI_PUBLIC_KEY);
+      setupVapiEvents();
+    } else { setTimeout(initVapi, 500); }
+  } catch (e) { showError('Failed to initialize Vapi: ' + e.message); }
+}
+document.addEventListener('DOMContentLoaded', () => { setTimeout(initVapi, 1500); });
+
+function setupVapiEvents() {
+  vapi.on('call-start', () => { setStatus('active','Connected'); document.getElementById('timerLabel').textContent='AI is speaking...'; document.getElementById('transcriptLog').innerHTML=''; startTimer(); });
+  vapi.on('call-end', () => { setStatus('idle','Call ended'); stopTimer(); resetUI(); addTranscript('system','Call ended'); });
+  vapi.on('speech-start', () => { document.getElementById('timerLabel').textContent='AI is speaking...'; });
+  vapi.on('speech-end', () => { document.getElementById('timerLabel').textContent='Listening...'; });
+  vapi.on('message', (msg) => { if (msg.type==='transcript' && msg.transcriptType==='final') { addTranscript(msg.role==='assistant'?'ai':'user', msg.transcript); } });
+  vapi.on('error', (err) => { showError('Call error: '+(err.message||'Unknown error. Check browser microphone permissions.')); stopTimer(); resetUI(); });
+}
+
+async function startCall() {
+  if (!vapi) { showError('Vapi not initialized. Refresh the page.'); return; }
+  hideError(); document.getElementById('btnStart').disabled=true; document.getElementById('btnEnd').disabled=false;
+  setStatus('connecting','Connecting...'); document.getElementById('timerLabel').textContent='Connecting to AI receptionist...';
+  try { await vapi.start(VAPI_ASSISTANT_ID || INLINE_ASSISTANT); }
+  catch (e) { showError('Failed to start call: '+e.message); resetUI(); }
+}
+
+function endCall() { if (vapi) vapi.stop(); stopTimer(); resetUI(); }
+
+function setStatus(state,text) { document.getElementById('statusDot').className='status-dot '+state; document.getElementById('statusText').textContent=text; }
+function resetUI() { document.getElementById('btnStart').disabled=false; document.getElementById('btnEnd').disabled=true; isMuted=false; }
+function startTimer() { callSeconds=0; updateTimerDisplay(); timerInterval=setInterval(()=>{callSeconds++;updateTimerDisplay();},1000); }
+function stopTimer() { clearInterval(timerInterval); }
+function updateTimerDisplay() { document.getElementById('timer').textContent=`${String(Math.floor(callSeconds/60)).padStart(2,'0')}:${String(callSeconds%60).padStart(2,'0')}`; }
+
+function addTranscript(role, text) {
+  const log = document.getElementById('transcriptLog'); const entry = document.createElement('div'); entry.className='transcript-entry';
+  if (role==='system') entry.innerHTML=`<span style="color:var(--text-light);font-style:italic;">${text}</span>`;
+  else { const label=role==='ai'?'AI':'You'; const cls=role==='ai'?'speaker':'speaker user'; entry.innerHTML=`<span class="${cls}">${label}:</span> ${text}`; }
+  log.appendChild(entry); log.scrollTop=log.scrollHeight;
+}
+
+function showError(msg) { const el=document.getElementById('errorMsg'); el.textContent=msg; el.style.display='block'; }
+function hideError() { document.getElementById('errorMsg').style.display='none'; }
+</script>
 </body>
 </html>
