@@ -4,37 +4,60 @@
 
 ### Overview
 
-The `wendy-reception` repository is a **greenfield Next.js 14 skeleton** with no business logic. It was scaffolded for Vercel deployment under the working name `dr-fort-vercel`.
+The `wendy-reception` repository is a **Next.js 14 application** with a modular Wendy platform under `src/wendy/`, static sales/demo HTML under `public/src/`, and Vercel deployment (project name `dr-fort-vercel` in `vercel.json`; package name `wendy-reception`). The live demo is at [dr-fort-vercel.vercel.app](https://dr-fort-vercel.vercel.app).
 
 ### Current Inventory
 
 | Component | Status |
 |---|---|
-| **Frontend** | Next.js 14.2.0 App Router, React 18.3, TypeScript 5.0 |
-| **Backend** | Empty `app/api/` directory — no API routes |
+| **Frontend** | Next.js 14.2 App Router, React 18.3, TypeScript 5.0; landing page links to demo surfaces |
+| **Demo surfaces** | `public/src/` — hub, deck, interactive prototype, live voice demo (static HTML) |
+| **API routes** | `/api/chat` (Wendy runtime with mock backends), `/api/health` (service health) |
+| **Agent architecture** | Receptionist, Scheduling, and Knowledge agents with orchestrator and registry |
+| **Tool system** | Calendar, communication, knowledge, and handoff tools (interfaces + mock implementations in chat route) |
+| **Model gateway** | Switchyard router, fallback logic, providers for Ollama, OpenAI, Anthropic, Gemini, Switchyard |
+| **Privacy / policy** | PHI classifier, anonymizer, routing policy, safety engine |
+| **Edge runtime** | Connector, health monitor, offline queue (library code; not deployed to hardware in-repo) |
+| **Configuration** | YAML: `config/routing.yaml`, `config/agents.yaml`, `config/offices/example.yaml` |
 | **Database** | None |
-| **Authentication** | None |
-| **Voice provider** | None |
-| **Calendar integration** | None |
-| **AI/LLM integration** | None |
-| **Agent/tool architecture** | None |
-| **Tests** | None |
-| **Docker** | None |
-| **Deployment** | Vercel project `wendy-reception` (linked) |
+| **Authentication** | Tenant context extraction from request headers (no user auth UI) |
+| **Voice provider** | Vapi integration in `public/src/live.html` demo only; no `/api/voice` route |
+| **Calendar integration** | Mock calendar backend in chat route; no live Google Calendar / ChiroTouch connection |
+| **Tests** | Vitest — `tests/agents.test.ts`, `tests/routing.test.ts`, synthetic patient fixtures |
+| **Docker** | `docker-compose.yml` (Wendy edge + Ollama), `docker/edge.Dockerfile`, `docker/central.Dockerfile` |
+| **Deployment** | Vercel (`vercel.json`); static demos served at `/src/*` |
 
-### Files
+### Key Directories
 
-- `app/page.tsx` — placeholder landing page listing static HTML files
-- `app/layout.tsx` — root layout, metadata titled "Dr Fort Vercel"
-- `src/*.html` — 4 static Vercel dashboard page exports (~472KB each), not application code
-- `public/src/*.html` — identical 4KB placeholder copies
-- `vercel.json` — Next.js framework config with rewrite rules for `/src/*`
-- `package.json` — name `dr-fort-vercel`, only Next.js/React deps
-- `.env.local` — Vercel OIDC token only
+- `app/` — Next.js App Router: landing page, `/api/chat`, `/api/health`
+- `src/wendy/` — Core platform modules:
+  - `agents/` — agent interface, registry, orchestrator, receptionist, scheduling, knowledge
+  - `tools/` — typed tool interfaces (calendar, communication, knowledge, handoff)
+  - `models/` — model gateway, Switchyard router, provider adapters, fallback
+  - `privacy/` — PHI/PII classification, anonymizer, privacy policy
+  - `policy/` — routing policy and safety boundaries
+  - `tenant/` — tenant context extraction and access guard
+  - `runtime/` — Wendy execution runtime and agent context
+  - `edge/` — edge-to-central connector, health, offline queue
+  - `config/` — YAML config loader and schema validation
+  - `audit/`, `observability/` — audit logger and metrics stubs
+- `public/src/` — Static demo HTML: `hub.html`, `deck.html`, `index.html` (prototype), `live.html`, plus `deck.pdf`
+- `config/` — Runtime YAML configuration
+- `tests/` — Vitest unit tests
+- `docker/` — Container images for edge and central deployments
+
+### What Is Not Yet Built
+
+- `/api/voice` and `/api/sms` webhook endpoints (listed in Part 3 target structure only)
+- Production calendar, SMS, email, or EHR integrations (chat route uses mock backends)
+- Database persistence or patient records
+- End-user authentication / admin UI
+- Jetson hardware deployment automation (Dockerfiles exist; no in-repo provisioning)
+- NeMo Anonymizer wired to a live service (interface exists in `privacy/anonymizer.ts`)
 
 ### Conclusion
 
-There is no existing receptionist booking flow or business logic to preserve. The architecture will be built on the existing Next.js App Router foundation. All abstractions (models, providers, agents, tools, conversations) will be created fresh in a clean, modular structure.
+The repository has moved beyond a skeleton: the agent runtime, model routing abstractions, privacy/policy layers, and demo surfaces are in place. Production integrations (voice telephony, real calendars, persistent storage, edge hardware rollout) remain to be connected. Part 2 describes the target end-state architecture; Parts 3–4 track structure and implementation phases.
 
 ---
 
